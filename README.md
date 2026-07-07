@@ -4,9 +4,11 @@
 conference marketing game for [Helix](https://helix.yordasgroup.com), the regulatory compliance
 platform by Yordas Group.
 
-Fight off swarming hazardous chemicals (SVHCs, PFAS, endocrine disruptors…), collect Helix app
-power-ups, and survive as long as you can. When your **Compliance Meter** hits zero, you are
-consumed by ECHA.
+Fight off swarming hazardous chemicals (SVHCs, PFAS, endocrine disruptors…) — each one wearing a
+GHS-style pictogram and label so you know exactly what's attacking — collect Helix power-ups, and
+survive as long as you can. When your **Compliance Meter** hits zero, you are consumed by ECHA.
+
+The UI uses the IBM Carbon (dark theme) colour system to match Helix.
 
 ## Running the game
 
@@ -32,15 +34,22 @@ Desktop with a mouse and keyboard is required (movement is WASD, aiming is mouse
 Score = survival time (10 pts/second) + a bonus for every chemical neutralised. Waves escalate
 forever — the run ends when you die or when you exit voluntarily and bank your score.
 
-### Power-ups (real Helix apps)
+Collecting a power-up pauses the action and shows what the app/service does, with a
+**Continue Hunting** button (Space/Enter/Esc also continue).
 
-| App | Effect |
+### Power-ups
+
+| Power-up | Effect |
 | --- | --- |
 | **Helix Connect** | A buddy consultant orbits you and auto-fires at hazards |
 | **Knowledge Hub** | 3-hit protective shield |
 | **Substance Inventory** | Fire rate doubled |
 | **Compliance Navigator** | Damage doubled |
 | **SDS Manager** | Restores the Compliance Meter |
+| **Expert Consultants** | Smart bomb — every hazard in sight takes heavy damage |
+| **Horizon Scanning** | Hazards move at half speed for 12 s |
+| **Global Coverage** | Shots pierce through hazards for 15 s |
+| **Training Academy** | +15 % movement speed |
 
 ## Leaderboard & lead capture
 
