@@ -34,22 +34,19 @@ Desktop with a mouse and keyboard is required (movement is WASD, aiming is mouse
 Score = survival time (10 pts/second) + a bonus for every chemical neutralised. Waves escalate
 forever — the run ends when you die or when you exit voluntarily and bank your score.
 
-Collecting a power-up pauses the action and shows what the app/service does, with a
-**Continue Hunting** button (Space/Enter/Esc also continue).
+Power-ups drop frequently (first one after ~6 s, then every 6–10 s, two at a time from wave 4).
+Collecting one pauses the action and shows what the app does, with a **Continue Hunting** button
+(Space/Enter/Esc also continue).
 
-### Power-ups
+### Power-ups (real Helix apps)
 
-| Power-up | Effect |
+| App | Effect |
 | --- | --- |
 | **Helix Connect** | A buddy consultant orbits you and auto-fires at hazards |
 | **Knowledge Hub** | 3-hit protective shield |
 | **Substance Inventory** | Fire rate doubled |
 | **Compliance Navigator** | Damage doubled |
 | **SDS Manager** | Restores the Compliance Meter |
-| **Expert Consultants** | Smart bomb — every hazard in sight takes heavy damage |
-| **Horizon Scanning** | Hazards move at half speed for 12 s |
-| **Global Coverage** | Shots pierce through hazards for 15 s |
-| **Training Academy** | +15 % movement speed |
 
 ## Leaderboard & lead capture
 

@@ -519,7 +519,6 @@ const Sfx = (() => {
     kill(){ tone(300, 90, 0.16, "sawtooth", 0.09); noise(0.12, 0.06); },
     hurt(){ tone(180, 60, 0.25, "sawtooth", 0.16); noise(0.2, 0.1); },
     shield(){ tone(900, 1400, 0.12, "triangle", 0.12); },
-    bomb(){ noise(0.5, 0.2); tone(120, 40, 0.6, "sawtooth", 0.2); },
     pickup(){ tone(523,523,0.09,"triangle",0.12); tone(659,659,0.09,"triangle",0.12,0.09); tone(880,880,0.14,"triangle",0.12,0.18); },
     wave(){ tone(220, 440, 0.25, "triangle", 0.1); },
     over(){ tone(392,392,0.22,"sawtooth",0.13); tone(311,311,0.22,"sawtooth",0.13,0.22); tone(233,110,0.6,"sawtooth",0.15,0.44); },
@@ -586,33 +585,6 @@ const ICON_SVG = {
       ' fill="#fff" stroke="'+NAVY+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
     '<path d="M43.5 14 h4.5 M42 20 h6 M41 26 h4" stroke="'+NAVY+'" stroke-width="2"/>' +
     '<path d="M31.8 40 L28.3 51.5 a3.2 3.2 0 0 0 3 4.3 h22.4 a3.2 3.2 0 0 0 3 -4.3 L52 40 q-10 7 -20.2 0 z" fill="#1d2c40"/>',
-  experts: // two consultants
-    '<circle cx="24" cy="21" r="9.5" fill="#fff" stroke="'+NAVY+'" stroke-width="3"/>' +
-    '<path d="M8 53 a16 15 0 0 1 32 0 z" fill="#fff" stroke="'+NAVY+'" stroke-width="3"/>' +
-    '<path d="M24 34 l3.5 5 -3.5 11 -3.5 -11 z" fill="'+ORANGE+'"/>' +
-    '<circle cx="45" cy="24" r="7.5" fill="#fff" stroke="'+NAVY+'" stroke-width="2.7"/>' +
-    '<path d="M33 53 a12.5 12 0 0 1 25 0 z" fill="#fff" stroke="'+NAVY+'" stroke-width="2.7"/>',
-  horizon: // radar sweep
-    '<circle cx="32" cy="33" r="23" fill="#fff" stroke="'+NAVY+'" stroke-width="3"/>' +
-    '<circle cx="32" cy="33" r="15" fill="none" stroke="'+NAVY+'" stroke-width="1.8" opacity="0.6"/>' +
-    '<circle cx="32" cy="33" r="7.5" fill="none" stroke="'+NAVY+'" stroke-width="1.8" opacity="0.6"/>' +
-    '<path d="M32 33 L32 10 A23 23 0 0 1 48 16 Z" fill="'+TEAL+'" opacity="0.55"/>' +
-    '<line x1="32" y1="33" x2="48" y2="16" stroke="'+TEAL+'" stroke-width="3" stroke-linecap="round"/>' +
-    '<line x1="9" y1="33" x2="55" y2="33" stroke="'+NAVY+'" stroke-width="1.6" opacity="0.5"/>' +
-    '<line x1="32" y1="10" x2="32" y2="56" stroke="'+NAVY+'" stroke-width="1.6" opacity="0.5"/>' +
-    '<circle cx="22" cy="42" r="3.4" fill="'+ORANGE+'"/>',
-  global: // globe
-    '<circle cx="32" cy="32" r="23" fill="#fff" stroke="'+NAVY+'" stroke-width="3"/>' +
-    '<ellipse cx="32" cy="32" rx="10.5" ry="23" fill="none" stroke="'+NAVY+'" stroke-width="2"/>' +
-    '<path d="M10 24 h44 M10 40 h44" stroke="'+NAVY+'" stroke-width="2"/>' +
-    '<path d="M12 32 a20 20 0 0 0 40 0" fill="none" stroke="'+BLUE+'" stroke-width="3"/>' +
-    '<circle cx="42" cy="20" r="3.2" fill="'+ORANGE+'"/>',
-  academy: // mortarboard
-    '<path d="M18 34 v9 c0 4.5 28 4.5 28 0 v-9" fill="#fff" stroke="'+NAVY+'" stroke-width="3"/>' +
-    '<path d="M32 14 L59 26 L32 38 L5 26 Z" fill="#fff" stroke="'+NAVY+'" stroke-width="3" stroke-linejoin="round"/>' +
-    '<path d="M32 22 l9 4 -9 4 -9 -4 z" fill="'+TEAL+'"/>' +
-    '<path d="M59 26 v13" stroke="'+ORANGE+'" stroke-width="2.6"/>' +
-    '<circle cx="59" cy="42" r="3" fill="'+ORANGE+'"/>',
 };
 
 const ICONS = {};                       // id -> HTMLImageElement
@@ -635,21 +607,9 @@ const POWERUPS = [
   { id:"sds", name:"SDS Manager", color:"#fa4d56", effect:"heal",
     short:"Peace of mind — restores your Compliance Meter.",
     msg:"SDS managed easily! The peace of mind from knowing your safety data sheets are all tracked gives your Compliance Meter a healthy boost." },
-  { id:"experts", name:"Expert Consultants", color:"#be95ff", effect:"bomb",
-    short:"Instant expert advice — every hazard in sight takes heavy damage.",
-    msg:"Stuck on a tough problem? Yordas' scientific and regulatory experts are on call — one consultation and the hazards around you don't stand a chance!" },
-  { id:"horizon", name:"Horizon Scanning", color:"#3ddbd9", effect:"slow",
-    short:"See threats coming — hazards move at half speed for 12 seconds.",
-    msg:"Regulatory horizon scanning shows you what's coming long before it lands. Hazards slow to a crawl while you stay two steps ahead." },
-  { id:"global", name:"Global Coverage", color:"#d4bbff", effect:"pierce",
-    short:"Your shots pierce straight through hazards for 15 seconds.",
-    msg:"One platform, every jurisdiction. With global regulatory coverage nothing stands in your way — your shots punch through entire crowds!" },
-  { id:"academy", name:"Training Academy", color:"#f1c21b", effect:"speed",
-    short:"Well-trained teams react faster — +15% movement speed.",
-    msg:"Invest in your people! Regulatory training gets your whole team moving faster through the landscape." },
 ];
 const PU_BY_ID = Object.fromEntries(POWERUPS.map(p => [p.id, p]));
-const PIERCE_TIME = 15, SLOW_TIME = 12;
+const MAX_PICKUPS_ON_MAP = 5;   // don't clutter the maze beyond this
 
 /* ─────────────────────────── enemy roster ─────────────────────────────── */
 /* Every enemy is a hazardous chemical wearing its GHS-style pictogram. */
@@ -914,17 +874,17 @@ function newGame(){
     player: {
       x: spawn.x, y: spawn.y, r: 13,
       hp: 100, maxHp: 100,
-      speed: 3.4, speedMul: 1,
+      speed: 3.4,
       aim: 0, iframes: 0, moving: false, animT: 0,
       shootCd: 0, baseRate: 0.26, rateMul: 1, baseDmg: 24, dmgMul: 1,
-      shield: 0, buddies: [], pierceT: 0,
+      shield: 0, buddies: [],
     },
     bullets: [], enemies: [], pickups: [], parts: [], floats: [],
     flow: new Uint16Array(world.tw * world.th), flowT: 0,
     powerCounts: {},                 // id -> times collected
     wave: 0, waveTimer: 0, waveBannerT: 0, waveBanner: "",
-    trickleT: 3, slowT: 0, flashT: 0,
-    puTimer: 9, puQueue: shuffle(POWERUPS.map(p => p.id)), puIdx: 0,
+    trickleT: 3,
+    puTimer: 6, puQueue: shuffle(POWERUPS.map(p => p.id)), puIdx: 0,
     elapsed: 0, score: 0, kills: 0,
   };
   computeFlowField(world, spawn.x, spawn.y, G.flow);
@@ -970,6 +930,7 @@ function spawnEnemy(pool){
   });
 }
 function spawnPickup(){
+  if (G.pickups.length >= MAX_PICKUPS_ON_MAP) return;
   const id = G.puQueue[G.puIdx % G.puQueue.length];
   G.puIdx++;
   if (G.puIdx % G.puQueue.length === 0) shuffle(G.puQueue);
@@ -1006,24 +967,6 @@ function applyPickup(id){
     case "firerate": p.rateMul = Math.max(0.27, p.rateMul * 0.5); break;
     case "damage":   p.dmgMul = Math.min(8, p.dmgMul * 2); break;
     case "heal":     p.hp = Math.min(p.maxHp, p.hp + 35); break;
-    case "bomb": {
-      let hit = 0;
-      for (const e of G.enemies){
-        if (dist2(e.x, e.y, p.x, p.y) < 820*820){
-          e.hp -= 150; hit++;
-          burst(e.x, e.y, e.type.color, 6);
-          if (e.hp <= 0) killEnemy(e);
-        }
-      }
-      G.enemies = G.enemies.filter(e => !e.dead);
-      G.flashT = 0.45;
-      shake(0.5, 10);
-      Sfx.bomb();
-      addFloat(p.x, p.y - 30, hit + " HAZARDS ADVISED!", "#be95ff");
-      break; }
-    case "slow":   G.slowT = SLOW_TIME; break;
-    case "pierce": p.pierceT = PIERCE_TIME; break;
-    case "speed":  p.speedMul = Math.min(1.6, p.speedMul * 1.15); break;
   }
   Sfx.pickup();
   queuePowerupModal(def);
@@ -1061,15 +1004,12 @@ function gameUpdate(dt){
   const p = G.player, world = G.world;
   G.elapsed += dt;
   G.score += dt * CONFIG.SCORE_PER_SEC;
-  if (G.slowT > 0) G.slowT -= dt;
-  if (G.flashT > 0) G.flashT -= dt;
-  if (p.pierceT > 0) p.pierceT -= dt;
 
   // movement
   const [mx, my] = movementAxes();
   p.moving = !!(mx || my);
   if (p.moving) p.animT += dt*9;
-  const spd = p.speed * p.speedMul * dt * 60;
+  const spd = p.speed * dt * 60;
   const nx = p.x + mx*spd, ny = p.y + my*spd;
   if (!circleBlocked(world, nx, p.y, p.r)) p.x = nx;
   if (!circleBlocked(world, p.x, ny, p.r)) p.y = ny;
@@ -1086,9 +1026,7 @@ function gameUpdate(dt){
     G.bullets.push({
       x: p.x + Math.cos(a)*20, y: p.y + Math.sin(a)*20,
       vx: Math.cos(a)*9.4, vy: Math.sin(a)*9.4,
-      dmg: p.baseDmg * p.dmgMul, r: 5, life: 1.5,
-      col: p.pierceT > 0 ? "#d4bbff" : C.blueLight,
-      pierce: p.pierceT > 0, hits: null,
+      dmg: p.baseDmg * p.dmgMul, r: 5, life: 1.5, col: C.blueLight,
     });
     Sfx.shoot();
     for (let i=0;i<2;i++) G.parts.push({ x:p.x+Math.cos(a)*24, y:p.y+Math.sin(a)*24,
@@ -1108,7 +1046,7 @@ function gameUpdate(dt){
       if (best && bd < 700*700){
         const d = Math.sqrt(bd) || 1;
         G.bullets.push({ x:bx, y:by, vx:(best.x-bx)/d*7.5, vy:(best.y-by)/d*7.5,
-                         dmg:b.dmg, r:4, life:1.4, col:"#4589ff", pierce:false, hits:null });
+                         dmg:b.dmg, r:4, life:1.4, col:"#4589ff" });
       }
     }
   }
@@ -1129,7 +1067,6 @@ function gameUpdate(dt){
 
   // enemies
   const INF = 0xffff, tw = world.tw;
-  const slowMul = G.slowT > 0 ? 0.5 : 1;
   for (const e of G.enemies){
     e.pulse += dt*3;
     const dx = p.x - e.x, dy = p.y - e.y;
@@ -1152,7 +1089,7 @@ function gameUpdate(dt){
       }
     }
     if (e.wanderT > 0){ vx = e.wx; vy = e.wy; e.wanderT -= dt; }
-    const step = e.speed * slowMul * dt * 60;
+    const step = e.speed * dt * 60;
     // radius-aware collision so big elites can't sink into walls;
     // if one is already overlapping a wall, let it walk out along the flow.
     const er = Math.min(e.size * 0.7, 20);
@@ -1210,18 +1147,12 @@ function gameUpdate(dt){
     if (b.dead) continue;
     for (const e of G.enemies){
       if (e.hp <= 0) continue;
-      if (b.hits && b.hits.has(e)) continue;
       const rad = e.size + b.r;
       if (dist2(b.x, b.y, e.x, e.y) < rad*rad){
         e.hp -= b.dmg;
         burst(e.x, e.y, e.type.color, 4);
         Sfx.hit();
         if (e.hp <= 0) killEnemy(e);
-        if (b.pierce){
-          if (!b.hits) b.hits = new Set();
-          b.hits.add(e);
-          continue;               // sail on through
-        }
         b.dead = true;
         break;
       }
@@ -1258,10 +1189,12 @@ function gameUpdate(dt){
       for (let i=0;i<n;i++) spawnEnemy(pool);
     }
   }
+  // power-ups: frequent drops, two at a time from wave 4
   G.puTimer -= dt;
   if (G.puTimer <= 0){
-    G.puTimer = Math.max(10, 15 - G.wave*0.2);
+    G.puTimer = Math.max(6.5, 10 - G.wave*0.25);
     spawnPickup();
+    if (G.wave >= 4) spawnPickup();
   }
   if (G.waveBannerT > 0) G.waveBannerT -= dt;
 }
@@ -1603,11 +1536,7 @@ function drawHud(){
   for (const pu of POWERUPS){
     const n = G.powerCounts[pu.id];
     if (!n) continue;
-    // timed & instant effects: only show while active
-    let badge = n > 1 ? "×" + n : "";
-    if (pu.effect === "pierce"){ if (p.pierceT <= 0) continue; badge = Math.ceil(p.pierceT) + "s"; }
-    if (pu.effect === "slow"){ if (G.slowT <= 0) continue; badge = Math.ceil(G.slowT) + "s"; }
-    if (pu.effect === "bomb") continue;
+    const badge = n > 1 ? "×" + n : "";
     cx_ -= 46;
     rr(ctx, cx_, 14, 40, 40, 4);
     ctx.fillStyle = "rgba(38,38,38,0.9)"; ctx.fill();
@@ -1756,17 +1685,6 @@ function renderGame(){
     ctx.fillText(f.text, f.x+ox, f.y+oy);
   }
   ctx.globalAlpha = 1;
-
-  // horizon-scanning tint (world slowed)
-  if (G.slowT > 0){
-    ctx.fillStyle = "rgba(61,219,217,0.05)";
-    ctx.fillRect(0,0,W,H);
-  }
-  // expert-consultant flash
-  if (G.flashT > 0){
-    ctx.fillStyle = "rgba(190,149,255," + (G.flashT/0.45*0.5).toFixed(3) + ")";
-    ctx.fillRect(0,0,W,H);
-  }
 
   drawHud();
   if (state === "playing") drawCrosshair();
