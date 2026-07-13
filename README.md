@@ -2,13 +2,17 @@
 
 **Survive the regulatory landscape** — a browser-based top-down survival shooter built as a
 conference marketing game for [Helix](https://helix.yordasgroup.com), the regulatory compliance
-platform by Yordas Group.
+platform by Yordas-3E.
 
 Fight off swarming hazardous chemicals (SVHCs, PFAS, endocrine disruptors…) — each one wearing a
-GHS-style pictogram and label so you know exactly what's attacking — collect Helix power-ups, and
-survive as long as you can. When your **Compliance Meter** hits zero, you are consumed by ECHA.
+GHS-style pictogram and label, tinted to its own colour so you know exactly what's attacking —
+collect Helix power-ups, and survive as long as you can. When your **Compliance Meter** hits zero,
+you are consumed by ECHA.
 
-The UI uses the IBM Carbon (dark theme) colour system to match Helix.
+The UI uses the **3E brand palette** (sampled from 3eco.com): deep navy `#133151` primary with
+gold `#e8c76f`, terracotta `#c78d6e` and sky-blue `#6ab5d4` accents. It lives in one place — the
+`:root` block at the top of the `<style>` in `index.html` (with a matching `C` object in the
+`<script>` for the canvas) — so the whole game re-themes from there.
 
 ## Running the game
 
@@ -34,7 +38,8 @@ Desktop with a mouse and keyboard is required (movement is WASD, aiming is mouse
 Score = survival time (10 pts/second) + a bonus for every chemical neutralised. Waves escalate
 forever — the run ends when you die or when you exit voluntarily and bank your score.
 
-Power-ups drop frequently (first one after ~6 s, then every 6–10 s, two at a time from wave 4).
+Power-ups drop frequently (first one after ~6 s, then every 6–10 s, two at a time from wave 4). A
+small chevron orbiting the player always points to the nearest one (brighter when it's off-screen).
 Collecting one pauses the action and shows what the app does, with a **Continue Hunting** button
 (Space/Enter/Esc also continue).
 
@@ -47,6 +52,10 @@ Collecting one pauses the action and shows what the app does, with a **Continue 
 | **Substance Inventory** | Fire rate doubled |
 | **Compliance Navigator** | Damage doubled |
 | **SDS Manager** | Restores the Compliance Meter |
+
+**Buddy synergy:** while you have a Helix Connect buddy, picking up **Substance Inventory** also
+makes the buddy fire 50 % faster, and **Compliance Navigator** makes it hit 50 % harder — the boosts
+carry over to any buddy you gain later, too.
 
 ## Leaderboard & lead capture
 
@@ -84,5 +93,5 @@ Game balance (wave sizes, enemy stats, power-up timings) is in `spawnWave` / `sp
 ## Credits
 
 Based on the internal pygame prototype *Chem Survivors*; power-up copy from the Helix Hunters
-concept deck. All art (Helix app icons, scientist, chemicals) is drawn in code — the file has no
-external assets.
+concept deck. All art (Helix app icons, scientist, GHS hazard pictograms) is drawn in code — the
+file has no external assets.

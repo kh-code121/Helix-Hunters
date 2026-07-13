@@ -6,27 +6,31 @@
 <title>Helix Hunters — Survive the Regulatory Landscape</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E">
 <style>
-/* ── IBM Carbon (dark theme) palette — matches Helix ─────────────────── */
+/* ── 3E (Yordas-3E) palette — sampled from 3eco.com ──────────────────────
+   Deep navy #133151 is the 3E primary; gold #e8c76f, terracotta #c78d6e and
+   sky blue #6ab5d4 are the accents. Legacy var names are kept and remapped
+   so the whole UI follows from this one block — edit here to re-theme.      */
 :root{
-  --bg:#161616;          /* gray 100 */
-  --layer:#262626;       /* gray 90  */
-  --layer2:#393939;      /* gray 80  */
-  --border:#525252;      /* gray 70  */
-  --text:#f4f4f4;        /* gray 10  */
-  --text2:#c6c6c6;       /* gray 30  */
-  --blue:#0f62fe;        /* blue 60 — Carbon primary */
-  --blue-hover:#0353e9;
-  --blue-light:#78a9ff;  /* blue 40 */
-  --cyan:#33b1ff;        /* cyan 40 */
-  --teal:#08bdba;        /* teal 40 */
-  --teal-light:#3ddbd9;  /* teal 30 */
-  --red:#fa4d56;         /* red 50  */
-  --red-dark:#da1e28;    /* red 60  */
-  --green:#42be65;       /* green 40 */
-  --yellow:#f1c21b;      /* yellow 30 */
-  --orange:#ff832b;      /* orange 40 */
-  --purple:#be95ff;      /* purple 40 */
-  --magenta:#ff7eb6;     /* magenta 40 */
+  --bg:#0a1826;          /* deep navy — backdrop */
+  --layer:#12293f;       /* panel surface */
+  --layer2:#1c3d5b;      /* raised surface */
+  --border:#2c5077;
+  --text:#eef4f8;
+  --text2:#a6b9cb;
+  --blue:#e8c76f;        /* → 3E gold: primary action / highlight */
+  --blue-hover:#f0d489;
+  --blue-light:#9ed6ea;  /* → light sky: headings */
+  --cyan:#6ab5d4;        /* → 3E sky blue */
+  --teal:#6ab5d4;        /* → 3E sky blue */
+  --teal-light:#9ed6ea;  /* → light sky */
+  --red:#e06b70;
+  --red-dark:#c94d52;
+  --green:#5cb98b;
+  --yellow:#e8c76f;      /* → 3E gold */
+  --orange:#e8c76f;      /* → 3E gold: score / rank */
+  --purple:#c78d6e;      /* → 3E terracotta */
+  --magenta:#c78d6e;     /* → 3E terracotta */
+  --navy:#133151;        /* 3E primary navy */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -57,9 +61,9 @@ body{
 .logo{
   font-size:clamp(40px,7vw,72px); font-weight:700; letter-spacing:.04em; line-height:1;
   text-align:center; margin:0 0 6px; text-transform:uppercase;
-  background:linear-gradient(92deg, var(--blue-light) 0%, var(--cyan) 55%, var(--teal-light) 100%);
+  background:linear-gradient(92deg, var(--blue) 0%, var(--purple) 50%, var(--cyan) 100%);
   -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter:drop-shadow(0 0 24px rgba(15,98,254,.45));
+  filter:drop-shadow(0 0 24px rgba(106,181,212,.4));
 }
 .tagline{text-align:center; color:var(--text2); letter-spacing:.28em; text-transform:uppercase;
   font-size:clamp(10px,1.5vw,14px); margin:0 0 30px}
@@ -71,16 +75,16 @@ body{
   border:1px solid var(--border); background:var(--layer2); color:var(--text);
   transition:background .1s, border-color .1s, box-shadow .1s; font-size:15px;
 }
-.btn:hover{background:#4c4c4c; border-color:#6f6f6f}
+.btn:hover{background:#26527a; border-color:#3d6a97}
 .btn:active{transform:translateY(1px)}
-.btn:focus-visible{outline:2px solid var(--text); outline-offset:2px}
+.btn:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
 .btn-primary{
-  background:var(--blue); border-color:var(--blue); color:#fff;
-  box-shadow:0 4px 22px rgba(15,98,254,.35);
+  background:var(--blue); border-color:var(--blue); color:#10233a;
+  box-shadow:0 4px 22px rgba(232,199,111,.32);
 }
 .btn-primary:hover{background:var(--blue-hover); border-color:var(--blue-hover)}
-.btn-danger{border-color:var(--red-dark); background:rgba(218,30,40,.16)}
-.btn-danger:hover{background:rgba(218,30,40,.34); border-color:var(--red)}
+.btn-danger{border-color:var(--red-dark); background:rgba(201,77,82,.18); color:var(--text)}
+.btn-danger:hover{background:rgba(201,77,82,.36); border-color:var(--red)}
 .btn-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:22px}
 .btn-row .btn{min-width:160px}
 
@@ -128,7 +132,7 @@ table.board td{padding:9px 10px; border-bottom:1px solid var(--layer2); font-siz
 table.board td.rank{color:var(--orange); font-weight:800; font-family:"IBM Plex Mono",Consolas,monospace; width:52px}
 table.board td.score{font-family:"IBM Plex Mono",Consolas,monospace; font-weight:700; color:var(--blue-light); text-align:right}
 table.board td.meta{color:var(--text2); font-size:12px; text-align:right; white-space:nowrap}
-table.board tr.me td{background:rgba(15,98,254,.16)}
+table.board tr.me td{background:rgba(232,199,111,.16)}
 table.board tr.me td:first-child{border-left:3px solid var(--blue)}
 .board-empty{text-align:center; color:var(--text2); padding:26px 0; font-style:italic}
 .privacy-note{font-size:11px; color:var(--text2); text-align:center; margin-top:10px}
@@ -137,7 +141,7 @@ table.board tr.me td:first-child{border-left:3px solid var(--blue)}
 .pu-panel{max-width:520px; text-align:center; border-top-color:var(--pu-c,var(--blue))}
 .pu-panel img{
   width:96px; height:96px; background:#f4f4f4; border-radius:10px; padding:8px;
-  box-shadow:0 0 40px var(--pu-c,rgba(15,98,254,.5)); margin:4px auto 14px; display:block;
+  box-shadow:0 0 40px var(--pu-c,rgba(106,181,212,.5)); margin:4px auto 14px; display:block;
 }
 .pu-panel .pu-kicker{font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--pu-c,var(--cyan)); margin:0 0 4px}
 .pu-panel h2{margin:0 0 10px; font-size:28px; color:var(--text)}
@@ -151,8 +155,8 @@ table.board tr.me td:first-child{border-left:3px solid var(--blue)}
 
 /* ---------- game over ---------- */
 .over-title{font-size:clamp(30px,5vw,48px); font-weight:700; letter-spacing:.03em; text-align:center; margin:0 0 4px; text-transform:uppercase}
-.over-title.echa{color:var(--red); text-shadow:0 0 30px rgba(250,77,86,.5)}
-.over-title.exit{color:var(--teal-light); text-shadow:0 0 30px rgba(61,219,217,.4)}
+.over-title.echa{color:var(--red); text-shadow:0 0 30px rgba(224,107,112,.5)}
+.over-title.exit{color:var(--teal-light); text-shadow:0 0 30px rgba(106,181,212,.4)}
 .over-flavor{text-align:center; color:var(--text2); max-width:560px; margin:0 auto 20px; font-size:14.5px; line-height:1.55}
 .stats-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin:0 0 20px}
 .stat{
@@ -181,7 +185,7 @@ form#signup{max-width:430px; margin:0 auto}
 
 .cta{
   margin-top:22px; border:1px solid var(--blue); border-radius:6px; padding:18px 20px;
-  background:linear-gradient(135deg, rgba(15,98,254,.14), rgba(8,189,186,.10)); text-align:center;
+  background:linear-gradient(135deg, rgba(232,199,111,.14), rgba(106,181,212,.10)); text-align:center;
 }
 .cta h3{margin:0 0 6px; font-size:17px; color:var(--blue-light); letter-spacing:.02em}
 .cta p{margin:0 0 14px; font-size:13px; color:var(--text2); line-height:1.5}
@@ -206,7 +210,7 @@ form#signup{max-width:430px; margin:0 auto}
       <button class="btn" id="btn-how">❓ How to Play</button>
       <button class="btn" id="btn-mute">🔊 Sound: On</button>
     </div>
-    <p class="footer-note">Powered by <b>Helix</b> — the regulatory compliance platform by Yordas Group</p>
+    <p class="footer-note">Powered by <b>Helix</b> — the regulatory compliance platform by Yordas-3E</p>
   </div>
 </div>
 
@@ -233,25 +237,25 @@ form#signup{max-width:430px; margin:0 auto}
             <rect x="3" y="3" width="40" height="58" rx="20" fill="none" stroke="#c6c6c6" stroke-width="2.5"/>
             <path d="M3 26 h40" stroke="#c6c6c6" stroke-width="2"/>
             <path d="M23 3 v23" stroke="#c6c6c6" stroke-width="2"/>
-            <path d="M4.5 24 a 18.5 21 0 0 1 18.5 -20 v22 h-18.5z" fill="#0f62fe" opacity="0.95"/>
+            <path d="M4.5 24 a 18.5 21 0 0 1 18.5 -20 v22 h-18.5z" fill="#e8c76f" opacity="0.95"/>
           </svg>
           <svg width="54" height="54" viewBox="0 0 54 54">
-            <circle cx="27" cy="27" r="15" fill="none" stroke="#78a9ff" stroke-width="2.5"/>
-            <path d="M27 4v12M27 38v12M4 27h12M38 27h12" stroke="#78a9ff" stroke-width="2.5"/>
-            <circle cx="27" cy="27" r="3" fill="#78a9ff"/>
+            <circle cx="27" cy="27" r="15" fill="none" stroke="#6ab5d4" stroke-width="2.5"/>
+            <path d="M27 4v12M27 38v12M4 27h12M38 27h12" stroke="#6ab5d4" stroke-width="2.5"/>
+            <circle cx="27" cy="27" r="3" fill="#6ab5d4"/>
           </svg>
         </div>
         <p><b>Aim with the mouse</b>, then <b>hold left-click</b> to fire your compliance blaster. Release to stop.</p>
       </div>
       <div class="tut-card" style="grid-column:1/-1">
         <h3>3 · Power Up With Helix</h3>
-        <p style="margin-bottom:8px">Grab the floating Helix icons. Each one pauses the action and tells you what it does:</p>
+        <p style="margin-bottom:8px">Grab the floating Helix icons — a small arrow around you always points to the nearest one. Each pauses the action and tells you what it does:</p>
         <div id="tut-powerups"></div>
       </div>
       <div class="tut-card">
         <h3>4 · Know Your Hazards</h3>
         <div class="tut-visual"><div class="meter-demo"><i></i></div></div>
-        <p>Every enemy is a <b>hazardous chemical</b> wearing its GHS pictogram — SVHCs, PFAS, endocrine disruptors and worse. Each hit drains your <b>Compliance Meter</b>. At zero… <b style="color:#fa4d56">ECHA consumes you.</b></p>
+        <p>Every enemy is a <b>hazardous chemical</b> wearing its GHS pictogram — SVHCs, PFAS, endocrine disruptors and worse. Each hit drains your <b>Compliance Meter</b>. At zero… <b style="color:#e06b70">ECHA consumes you.</b></p>
       </div>
       <div class="tut-card">
         <h3>5 · Bank Your Score</h3>
@@ -371,17 +375,17 @@ form#signup{max-width:430px; margin:0 auto}
 <script>
 "use strict";
 /* ═════════════════════════════════════════════════════════════════════════
-   HELIX HUNTERS — a conference survival shooter for Helix (Yordas Group)
+   HELIX HUNTERS — a conference survival shooter for Helix (Yordas-3E)
    Single self-contained file: open it in any modern browser, no internet
    needed. See README.md for booth-staff notes (CSV export, reset, config).
-   UI palette: IBM Carbon dark theme (as used by Helix).
+   UI palette: 3E brand colours (sampled from 3eco.com).
    ═════════════════════════════════════════════════════════════════════════ */
 
 /* ───────────────────────────── CONFIG ─────────────────────────────────── */
 const CONFIG = {
   HELIX_SIGNUP_URL : "https://helix.yordasgroup.com",
-  CONSENT_TEXT     : "I'm happy for Yordas Group to contact me about Helix and related regulatory services.",
-  STORAGE_NOTE     : "Your details are stored locally on this device only and are collected by Yordas Group staff after the event. Only your username appears on the leaderboard.",
+  CONSENT_TEXT     : "I'm happy for Yordas-3E to contact me about Helix and related regulatory services.",
+  STORAGE_NOTE     : "Your details are stored locally on this device only and are collected by Yordas-3E staff after the event. Only your username appears on the leaderboard.",
   LEADERBOARD_KEY  : "helixHunters.leaderboard.v1",
   SIGNUPS_KEY      : "helixHunters.signups.v1",
   MUTE_KEY         : "helixHunters.muted.v1",
@@ -392,14 +396,16 @@ const CONFIG = {
   KILL_SCORE_HP    : 0.15,   // + maxHp * this
 };
 
-/* Carbon palette for canvas drawing */
+/* 3E palette for canvas drawing (legacy keys kept, remapped to 3E colours).
+   navy=#133151 primary · gold=#e8c76f · terracotta=#c78d6e · sky=#6ab5d4 */
 const C = {
-  bg:"#161616", floor:"#1c1c1e", floorAlt:"#1a1a1c",
-  wall:"#2b3648", wallEdge:"#3d4a61", wallGlow:"rgba(69,137,255,0.4)",
-  blue:"#0f62fe", blueLight:"#78a9ff", cyan:"#33b1ff",
-  teal:"#08bdba", tealLight:"#3ddbd9",
-  red:"#fa4d56", redDark:"#da1e28", green:"#42be65",
-  yellow:"#f1c21b", orange:"#ff832b", text:"#f4f4f4", text2:"#c6c6c6",
+  bg:"#0a1826", floor:"#102338", floorAlt:"#0e2034",
+  wall:"#1b3a5c", wallEdge:"#2c5480", wallGlow:"rgba(106,181,212,0.4)",
+  navy:"#133151", gold:"#e8c76f", terra:"#c78d6e",
+  blue:"#133151", blueLight:"#9ed6ea", cyan:"#6ab5d4",
+  teal:"#6ab5d4", tealLight:"#9ed6ea",
+  red:"#e06b70", redDark:"#c94d52", green:"#5cb98b",
+  yellow:"#e8c76f", orange:"#e8c76f", text:"#eef4f8", text2:"#a6b9cb",
 };
 
 /* ─────────────────────────── tiny helpers ─────────────────────────────── */
@@ -411,6 +417,22 @@ const dist2 = (ax,ay,bx,by) => { const dx=ax-bx, dy=ay-by; return dx*dx+dy*dy; }
 const fmtTime = s => { s=Math.floor(s); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* hex colour utilities (for tinting enemy pictograms to their aura) */
+const _hexCache = {};
+function hexRgb(h){
+  if (_hexCache[h]) return _hexCache[h];
+  let s = h.replace("#","");
+  if (s.length === 3) s = s[0]+s[0]+s[1]+s[1]+s[2]+s[2];
+  const n = parseInt(s,16);
+  return (_hexCache[h] = [ (n>>16)&255, (n>>8)&255, n&255 ]);
+}
+function mixHex(hex, tr, tg, tb, t){          // blend hex toward (tr,tg,tb) by t
+  const [r,g,b] = hexRgb(hex);
+  return "rgb(" + Math.round(r+(tr-r)*t) + "," + Math.round(g+(tg-g)*t) + "," + Math.round(b+(tb-b)*t) + ")";
+}
+const lighten = (hex,t) => mixHex(hex,255,255,255,t);
+const darken  = (hex,t) => mixHex(hex,0,0,0,t);
 
 /* ─────────────────────────── safe storage ─────────────────────────────── */
 const Store = (() => {
@@ -877,7 +899,7 @@ function newGame(){
       speed: 3.4,
       aim: 0, iframes: 0, moving: false, animT: 0,
       shootCd: 0, baseRate: 0.26, rateMul: 1, baseDmg: 24, dmgMul: 1,
-      shield: 0, buddies: [],
+      shield: 0, buddies: [], buddyRateMul: 1, buddyDmgMul: 1,
     },
     bullets: [], enemies: [], pickups: [], parts: [], floats: [],
     flow: new Uint16Array(world.tw * world.th), flowT: 0,
@@ -908,22 +930,27 @@ function spawnWave(){
 function spawnEnemy(pool){
   if (G.enemies.length > 180) return;
   const p = G.player;
-  // spawn out of sight but close enough to join the fight quickly
-  let s = freeSpot(G.world, 24), tries = 0;
-  while (tries++ < 80){
-    const d2v = dist2(s.x, s.y, p.x, p.y);
-    if (d2v > 380*380 && d2v < 950*950) break;
-    s = freeSpot(G.world, 24);
-  }
   const type = pool[Math.floor(Math.random()*pool.length)];
   const elite = G.wave >= 4 && Math.random() < Math.min(0.05 + G.wave*0.008, 0.16);
   const size = (elite ? rnd(22,27) : rnd(11,17));
+  // collision radius: never wider than fits a one-tile corridor with margin
+  const colR = clamp(size*0.7, 8, TILE*0.5 - 8);        // <= 24
+  // spawn out of sight but close enough to join the fight quickly,
+  // with enough clearance for this enemy's body
+  let s = freeSpot(G.world, colR + 4), tries = 0;
+  while (tries++ < 80){
+    const d2v = dist2(s.x, s.y, p.x, p.y);
+    if (d2v > 380*380 && d2v < 950*950) break;
+    s = freeSpot(G.world, colR + 4);
+  }
+  // path jitter kept small enough that the body still fits the corridor
+  const jm = clamp(TILE*0.5 - colR - 6, 0, 12);
   const hp = Math.round((55 + G.wave*20) * (elite ? 2.6 : 1));
   G.enemies.push({
-    x: s.x, y: s.y, type, size, elite,
+    x: s.x, y: s.y, type, size, colR, elite,
     hp, maxHp: hp,
     speed: (0.85 + G.wave*0.055 + rnd(0,0.35)) * (elite ? 0.7 : 1),
-    jx: rnd(-14,14), jy: rnd(-14,14),   // per-enemy path jitter (breaks conga lines)
+    jx: rnd(-jm,jm), jy: rnd(-jm,jm),   // per-enemy path jitter (breaks conga lines)
     dmg: Math.min(26, 5 + G.wave*1.5) * (elite ? 1.5 : 1),
     pulse: rnd(0, Math.PI*2),
     wanderT: 0, wx: 0, wy: 0,
@@ -955,17 +982,38 @@ function killEnemy(e){
   Sfx.kill();
 }
 
+/* Recompute every buddy's live fire-rate & damage from its base plus the
+   Connect stack level and the boosts granted by matching power-ups. */
+function refreshBuddies(){
+  const p = G.player;
+  for (const b of p.buddies){
+    b.rate = Math.max(0.1, b.baseRate * p.buddyRateMul);
+    b.dmg  = b.baseDmg * p.buddyDmgMul;
+  }
+}
+
 function applyPickup(id){
   const p = G.player, def = PU_BY_ID[id];
   G.powerCounts[id] = (G.powerCounts[id] || 0) + 1;
   switch (def.effect){
     case "buddy":
-      if (p.buddies.length < 2) p.buddies.push({ angle: p.buddies.length * Math.PI, cd: 0, rate: 0.5, dmg: 16 });
-      else p.buddies.forEach(b => { b.dmg += 8; b.rate = Math.max(0.28, b.rate*0.85); });
+      if (p.buddies.length < 2)
+        p.buddies.push({ angle: p.buddies.length * Math.PI, cd: 0, baseRate: 0.5, baseDmg: 16, rate: 0.5, dmg: 16 });
+      else
+        p.buddies.forEach(b => { b.baseDmg += 8; b.baseRate = Math.max(0.28, b.baseRate*0.85); });
+      refreshBuddies();
       break;
     case "shield":   p.shield = Math.min(6, p.shield + 3); break;
-    case "firerate": p.rateMul = Math.max(0.27, p.rateMul * 0.5); break;
-    case "damage":   p.dmgMul = Math.min(8, p.dmgMul * 2); break;
+    case "firerate":
+      p.rateMul = Math.max(0.27, p.rateMul * 0.5);
+      p.buddyRateMul = Math.max(0.2, p.buddyRateMul / 1.5);   // buddy fires 50% faster too
+      refreshBuddies();
+      break;
+    case "damage":
+      p.dmgMul = Math.min(8, p.dmgMul * 2);
+      p.buddyDmgMul = Math.min(8, p.buddyDmgMul * 1.5);       // buddy hits 50% harder too
+      refreshBuddies();
+      break;
     case "heal":     p.hp = Math.min(p.maxHp, p.hp + 35); break;
   }
   Sfx.pickup();
@@ -997,6 +1045,55 @@ function continueFromModal(){
   state = "playing";
   canvas.style.cursor = "none";
   hideAllScreens();
+}
+
+/* Circle-vs-wall de-penetration: eject an enemy out of any wall tile its body
+   overlaps, along the shortest exit. Runs every frame as a hard guarantee that
+   nothing — however it got shoved — can stay embedded in a wall. */
+function depenetrateEnemy(world, e){
+  const r = e.colR, T = TILE, tiles = world.tiles;
+  // iterate: pushing out of one wall tile can push into an adjacent one
+  // (corners, 1-tile corridors, dense pile-ups), so resolve a few times
+  for (let pass=0; pass<4; pass++){
+    let hit = false;
+    const minTX = Math.max(0, Math.floor((e.x - r)/T));
+    const maxTX = Math.min(world.tw-1, Math.floor((e.x + r)/T));
+    const minTY = Math.max(0, Math.floor((e.y - r)/T));
+    const maxTY = Math.min(world.th-1, Math.floor((e.y + r)/T));
+    for (let ty=minTY; ty<=maxTY; ty++){
+      const row = tiles[ty];
+      for (let tx=minTX; tx<=maxTX; tx++){
+        if (row[tx] !== 1) continue;
+        const rx0=tx*T, ry0=ty*T, rx1=rx0+T, ry1=ry0+T;
+        const cx = e.x < rx0 ? rx0 : (e.x > rx1 ? rx1 : e.x);   // nearest point on tile
+        const cy = e.y < ry0 ? ry0 : (e.y > ry1 ? ry1 : e.y);
+        const dx = e.x - cx, dy = e.y - cy, d2v = dx*dx + dy*dy;
+        if (d2v >= r*r) continue;                                // not overlapping
+        hit = true;
+        if (d2v > 0.0001){                                       // push out along normal
+          const d = Math.sqrt(d2v);
+          e.x += dx/d*(r-d); e.y += dy/d*(r-d);
+        } else {                                                 // centre buried: eject via nearest open face
+          const left=e.x-rx0, right=rx1-e.x, top=e.y-ry0, bot=ry1-e.y;
+          const openL = !isWall(world, tx-1, ty), openR = !isWall(world, tx+1, ty);
+          const openT = !isWall(world, tx, ty-1), openB = !isWall(world, tx, ty+1);
+          let bestFace = "l", bestPen = openL ? left : Infinity;
+          if (openR && right < bestPen){ bestPen = right; bestFace = "r"; }
+          if (openT && top   < bestPen){ bestPen = top;   bestFace = "t"; }
+          if (openB && bot   < bestPen){ bestPen = bot;   bestFace = "b"; }
+          if (bestPen === Infinity){    // fully walled in: eject toward geometric nearest face
+            const m = Math.min(left,right,top,bot);
+            bestFace = m===left?"l":m===right?"r":m===top?"t":"b";
+          }
+          if      (bestFace==="l") e.x = rx0 - r;
+          else if (bestFace==="r") e.x = rx1 + r;
+          else if (bestFace==="t") e.y = ry0 - r;
+          else                     e.y = ry1 + r;
+        }
+      }
+    }
+    if (!hit) break;
+  }
 }
 
 /* ─────────────────────────── update: game ─────────────────────────────── */
@@ -1046,7 +1143,7 @@ function gameUpdate(dt){
       if (best && bd < 700*700){
         const d = Math.sqrt(bd) || 1;
         G.bullets.push({ x:bx, y:by, vx:(best.x-bx)/d*7.5, vy:(best.y-by)/d*7.5,
-                         dmg:b.dmg, r:4, life:1.4, col:"#4589ff" });
+                         dmg:b.dmg, r:4, life:1.4, col:C.sky });
       }
     }
   }
@@ -1066,46 +1163,45 @@ function gameUpdate(dt){
   }
 
   // enemies
-  const INF = 0xffff, tw = world.tw;
+  const INF = 0xffff, tw = world.tw, th = world.th;
   for (const e of G.enemies){
     e.pulse += dt*3;
     const dx = p.x - e.x, dy = p.y - e.y;
     const d = Math.hypot(dx, dy) || 1;
     let vx = dx/d, vy = dy/d;
-    // far away: follow the flow field through the maze
-    const etx = Math.floor(e.x/TILE), ety = Math.floor(e.y/TILE);
+    // steer along the flow field toward the lowest-distance neighbouring tile.
+    // works even when the centre tile reads INF (e.g. momentarily wall-adjacent),
+    // so an enemy always heads back toward open floor rather than into the wall.
+    const etx = clamp(Math.floor(e.x/TILE), 0, tw-1);
+    const ety = clamp(Math.floor(e.y/TILE), 0, th-1);
     const ei = ety*tw + etx;
-    const myDist = (etx>=0 && ety>=0 && etx<tw && ety<world.th) ? G.flow[ei] : INF;
-    if (myDist !== INF && myDist > 2){
-      let best = myDist, btx = etx, bty = ety;
-      if (etx>0            && G.flow[ei-1]  < best){ best = G.flow[ei-1];  btx = etx-1; bty = ety; }
-      if (etx<tw-1         && G.flow[ei+1]  < best){ best = G.flow[ei+1];  btx = etx+1; bty = ety; }
-      if (ety>0            && G.flow[ei-tw] < best){ best = G.flow[ei-tw]; btx = etx;   bty = ety-1; }
-      if (ety<world.th-1   && G.flow[ei+tw] < best){ best = G.flow[ei+tw]; btx = etx;   bty = ety+1; }
-      if (best < myDist){
-        const gx = btx*TILE + TILE/2 + e.jx, gy = bty*TILE + TILE/2 + e.jy;
-        const gd = Math.hypot(gx-e.x, gy-e.y) || 1;
-        vx = (gx-e.x)/gd; vy = (gy-e.y)/gd;
-      }
+    const myDist = G.flow[ei];
+    let best = myDist, btx = etx, bty = ety;
+    if (etx>0     && G.flow[ei-1]  < best){ best = G.flow[ei-1];  btx = etx-1; bty = ety; }
+    if (etx<tw-1  && G.flow[ei+1]  < best){ best = G.flow[ei+1];  btx = etx+1; bty = ety; }
+    if (ety>0     && G.flow[ei-tw] < best){ best = G.flow[ei-tw]; btx = etx;   bty = ety-1; }
+    if (ety<th-1  && G.flow[ei+tw] < best){ best = G.flow[ei+tw]; btx = etx;   bty = ety+1; }
+    if (best < INF && best < myDist){
+      const gx = btx*TILE + TILE/2 + e.jx, gy = bty*TILE + TILE/2 + e.jy;
+      const gd = Math.hypot(gx-e.x, gy-e.y) || 1;
+      vx = (gx-e.x)/gd; vy = (gy-e.y)/gd;
     }
+    if (myDist <= 2){ vx = dx/d; vy = dy/d; }        // close in: home directly
     if (e.wanderT > 0){ vx = e.wx; vy = e.wy; e.wanderT -= dt; }
-    const step = e.speed * dt * 60;
-    // radius-aware collision so big elites can't sink into walls;
-    // if one is already overlapping a wall, let it walk out along the flow.
-    const er = Math.min(e.size * 0.7, 20);
-    const stuck = circleBlocked(world, e.x, e.y, Math.min(er, 8));
+
+    // radius-aware sliding movement, then hard de-penetration
+    const step = e.speed * dt * 60, er = e.colR;
     let moved = false;
-    const ex = e.x + vx*step, ey = e.y + vy*step;
-    if (stuck){
-      e.x = ex; e.y = ey; moved = true;         // escape mode: ignore collision
-    } else {
-      if (!circleBlocked(world, ex, e.y, er)){ e.x = ex; moved = true; }
-      if (!circleBlocked(world, e.x, ey, er)){ e.y = ey; moved = true; }
-    }
-    if (!moved && d > 60){
+    const nx = e.x + vx*step;
+    if (!circleBlocked(world, nx, e.y, er)){ e.x = nx; moved = true; }
+    const ny = e.y + vy*step;
+    if (!circleBlocked(world, e.x, ny, er)){ e.y = ny; moved = true; }
+    if (!moved && d > 60){                            // corner deadlock: nudge
       const a = rnd(0, Math.PI*2);
-      e.wx = Math.cos(a); e.wy = Math.sin(a); e.wanderT = rnd(0.3, 0.8);
+      e.wx = Math.cos(a); e.wy = Math.sin(a); e.wanderT = rnd(0.25, 0.6);
     }
+    depenetrateEnemy(world, e);
+
     // touch damage
     const rr2 = (e.size + p.r) * (e.size + p.r);
     if (dist2(e.x, e.y, p.x, p.y) < rr2 && p.iframes <= 0){
@@ -1121,26 +1217,23 @@ function gameUpdate(dt){
       }
     }
   }
-  // gentle separation so enemies don't stack — never push anyone into a wall
+  // gentle separation so enemies don't stack, sized by their bodies
   const es = G.enemies;
   for (let i=0; i<es.length; i++){
     const a = es[i];
     for (let j=i+1; j<es.length; j++){
       const b = es[j];
-      const min = (a.size + b.size) * 0.8;
+      const min = (a.colR + b.colR) * 0.95;
       const d2v = dist2(a.x,a.y,b.x,b.y);
       if (d2v < min*min && d2v > 0.01){
         const d = Math.sqrt(d2v), push = (min - d) * 0.5 / d;
         const px_ = (a.x-b.x)*push, py_ = (a.y-b.y)*push;
-        const nax = a.x + px_, nay = a.y + py_;
-        if (!isWall(world, (nax/TILE)|0, (a.y/TILE)|0)) a.x = nax;
-        if (!isWall(world, (a.x/TILE)|0, (nay/TILE)|0)) a.y = nay;
-        const nbx = b.x - px_, nby = b.y - py_;
-        if (!isWall(world, (nbx/TILE)|0, (b.y/TILE)|0)) b.x = nbx;
-        if (!isWall(world, (b.x/TILE)|0, (nby/TILE)|0)) b.y = nby;
+        a.x += px_; a.y += py_; b.x -= px_; b.y -= py_;
       }
     }
   }
+  // final pass: eject anyone separation may have shoved into a wall
+  for (const e of es) depenetrateEnemy(world, e);
 
   // bullet ↔ enemy
   for (const b of G.bullets){
@@ -1251,54 +1344,56 @@ function drawWorld(world, camX, camY, dim){
   ctx.fillStyle = C.bg; ctx.fillRect(0,0,W,H);
   const ox = Math.round(W/2 - camX), oy = Math.round(H/2 - camY);
   ctx.drawImage(world.mapCanvas, ox, oy);
-  if (dim){ ctx.fillStyle = "rgba(13,13,13,0.5)"; ctx.fillRect(0,0,W,H); }
+  if (dim){ ctx.fillStyle = "rgba(7,16,27,0.55)"; ctx.fillRect(0,0,W,H); }
 }
 
-/* ── GHS-style pictogram glyphs (black, drawn centred at 0,0, scale s) ── */
-function glyphSkull(g, s){
-  g.fillStyle = "#111";
+/* ── GHS-style pictogram glyphs, drawn centred at 0,0, scale s.
+   `ink` = dark tint of the enemy's aura colour, `paper` = light tint used for
+   cut-outs (eyes, highlights) so the whole symbol reads in the enemy's hue. ── */
+function glyphSkull(g, s, ink, paper){
+  g.fillStyle = ink;
   g.beginPath(); g.arc(0, -s*0.16, s*0.34, 0, 7); g.fill();
   g.fillRect(-s*0.18, s*0.02, s*0.36, s*0.16);
-  g.fillStyle = "#fff";
+  g.fillStyle = paper;
   g.beginPath(); g.arc(-s*0.13, -s*0.2, s*0.09, 0, 7); g.fill();
   g.beginPath(); g.arc( s*0.13, -s*0.2, s*0.09, 0, 7); g.fill();
-  g.strokeStyle = "#111"; g.lineWidth = Math.max(1.5, s*0.09); g.lineCap = "round";
+  g.strokeStyle = ink; g.lineWidth = Math.max(1.5, s*0.09); g.lineCap = "round";
   g.beginPath();
   g.moveTo(-s*0.3, s*0.24); g.lineTo(s*0.3, s*0.46);
   g.moveTo( s*0.3, s*0.24); g.lineTo(-s*0.3, s*0.46);
   g.stroke();
 }
-function glyphExclaim(g, s){
-  g.fillStyle = "#111";
+function glyphExclaim(g, s, ink, paper){
+  g.fillStyle = ink;
   const w = Math.max(2.5, s*0.18);
   g.fillRect(-w/2, -s*0.46, w, s*0.6);
   g.beginPath(); g.arc(0, s*0.36, w*0.62, 0, 7); g.fill();
 }
-function glyphCorrosion(g, s){
+function glyphCorrosion(g, s, ink, paper){
   g.save(); g.rotate(-0.55);
-  g.fillStyle = "#111";
+  g.fillStyle = ink;
   g.fillRect(-s*0.08, -s*0.55, s*0.17, s*0.42);
   g.restore();
-  g.fillStyle = "#111";
+  g.fillStyle = ink;
   g.beginPath(); g.arc(-s*0.02, -s*0.02, s*0.07, 0, 7); g.fill();
   g.beginPath(); g.arc( s*0.12,  s*0.14, s*0.07, 0, 7); g.fill();
   g.fillRect(-s*0.42, s*0.3, s*0.84, s*0.12);
 }
-function glyphTrefoil(g, s){
-  g.fillStyle = "#111";
+function glyphTrefoil(g, s, ink, paper){
+  g.fillStyle = ink;
   for (let i=0;i<3;i++){
     const a0 = -Math.PI/2 + i*2.094 - 0.5;
     g.beginPath(); g.moveTo(0,0);
     g.arc(0, 0, s*0.48, a0, a0+1.0);
     g.closePath(); g.fill();
   }
-  g.fillStyle = "#fff";
+  g.fillStyle = paper;
   g.beginPath(); g.arc(0, 0, s*0.16, 0, 7); g.fill();
-  g.fillStyle = "#111";
+  g.fillStyle = ink;
   g.beginPath(); g.arc(0, 0, s*0.09, 0, 7); g.fill();
 }
-function glyphFlame(g, s){
-  g.fillStyle = "#111";
+function glyphFlame(g, s, ink, paper){
+  g.fillStyle = ink;
   g.beginPath();
   g.moveTo(0, -s*0.5);
   g.bezierCurveTo( s*0.34, -s*0.18,  s*0.38, s*0.05,  s*0.24, s*0.3);
@@ -1306,36 +1401,36 @@ function glyphFlame(g, s){
   g.bezierCurveTo(-s*0.4,  s*0.42,  -s*0.4,  s*0.28, -s*0.24, s*0.3);
   g.bezierCurveTo(-s*0.38, s*0.05,  -s*0.34, -s*0.18, 0,     -s*0.5);
   g.fill();
-  g.fillStyle = "#fff";
+  g.fillStyle = paper;
   g.beginPath(); g.ellipse(0, s*0.26, s*0.12, s*0.17, 0, 0, 7); g.fill();
 }
-function glyphEnviro(g, s){ // dead fish, belly-up
-  g.fillStyle = "#111";
+function glyphEnviro(g, s, ink, paper){ // dead fish, belly-up
+  g.fillStyle = ink;
   g.beginPath(); g.ellipse(-s*0.06, -s*0.05, s*0.32, s*0.17, -0.15, 0, 7); g.fill();
   g.beginPath();
   g.moveTo(s*0.2, -s*0.08); g.lineTo(s*0.44, -s*0.24); g.lineTo(s*0.42, s*0.1);
   g.closePath(); g.fill();
-  g.strokeStyle = "#fff"; g.lineWidth = Math.max(1.2, s*0.05);
+  g.strokeStyle = paper; g.lineWidth = Math.max(1.2, s*0.05);
   g.beginPath();
   g.moveTo(-s*0.28, -s*0.14); g.lineTo(-s*0.18, -s*0.04);
   g.moveTo(-s*0.18, -s*0.14); g.lineTo(-s*0.28, -s*0.04);
   g.stroke();
-  g.strokeStyle = "#111"; g.lineWidth = Math.max(1.5, s*0.08);
+  g.strokeStyle = ink; g.lineWidth = Math.max(1.5, s*0.08);
   g.beginPath();
   g.moveTo(-s*0.42, s*0.32);
   g.quadraticCurveTo(-s*0.2, s*0.18, 0, s*0.32);
   g.quadraticCurveTo(s*0.2, s*0.46, s*0.42, s*0.32);
   g.stroke();
 }
-function glyphHealth(g, s){ // exploding-chest silhouette (health hazard)
-  g.fillStyle = "#111";
+function glyphHealth(g, s, ink, paper){ // exploding-chest silhouette (health hazard)
+  g.fillStyle = ink;
   g.beginPath(); g.arc(0, -s*0.34, s*0.15, 0, 7); g.fill();
   g.beginPath();
   g.moveTo(-s*0.26, s*0.5); g.lineTo(-s*0.2, -s*0.12);
   g.quadraticCurveTo(0, -s*0.22, s*0.2, -s*0.12);
   g.lineTo(s*0.26, s*0.5);
   g.closePath(); g.fill();
-  g.strokeStyle = "#fff"; g.lineWidth = Math.max(1.4, s*0.07); g.lineCap = "round";
+  g.strokeStyle = paper; g.lineWidth = Math.max(1.4, s*0.07); g.lineCap = "round";
   const cx0 = 0, cy0 = s*0.08;
   for (let i=0;i<6;i++){
     const a = i*Math.PI/3 + 0.26;
@@ -1371,20 +1466,25 @@ function drawHazard(e, sx, sy){
   if (Math.random() < 0.04)
     G.parts.push({ x:e.x+rnd(-r,r)*0.6, y:e.y-r*0.4, vx:rnd(-0.2,0.2), vy:rnd(-1.2,-0.5),
                    life:rnd(0.4,0.8), maxLife:0.8, col, size:rnd(1.6,3) });
-  // GHS diamond with pictogram
+  // GHS diamond with pictogram, tinted to the enemy's aura colour so hazards
+  // read clearly apart from the (white-carded) Helix power-ups
+  const fill   = lighten(col, 0.82);   // pale wash of the aura
+  const border = darken(col, 0.28);    // deep aura border
+  const ink    = darken(col, 0.55);    // pictogram in a dark aura tint
+  const paper  = lighten(col, 0.9);    // cut-out highlights
   const side = r*1.24;                       // half-diagonal ≈ 0.88 side
   ctx.save();
   ctx.translate(sx, sy);
   ctx.save();
   ctx.rotate(Math.PI/4);
-  ctx.fillStyle = "#ffffff";
-  ctx.strokeStyle = C.redDark;
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = border;
   ctx.lineWidth = Math.max(2, r*0.16);
   const hs = side*0.72;
   ctx.beginPath(); ctx.rect(-hs, -hs, hs*2, hs*2); ctx.fill(); ctx.stroke();
   ctx.restore();
   const gl = GLYPHS[e.type.glyph] || glyphExclaim;
-  gl(ctx, r*1.05);
+  gl(ctx, r*1.05, ink, paper);
   ctx.restore();
   // elite ring
   if (e.elite){
@@ -1565,7 +1665,7 @@ function drawHud(){
   ctx.globalAlpha = 0.9;
   ctx.drawImage(mini, miX, miY);
   ctx.globalAlpha = 1;
-  ctx.strokeStyle = "rgba(120,169,255,0.45)"; ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(106,181,212,0.45)"; ctx.lineWidth = 1;
   ctx.strokeRect(miX-1, miY-1, miW+2, miH+2);
   const sx_ = miX + p.x / G.world.w * miW, sy_ = miY + p.y / G.world.h * miH;
   ctx.fillStyle = C.orange;
@@ -1595,17 +1695,49 @@ function drawHud(){
 
 function drawCrosshair(){
   const x = mouse.x, y = mouse.y;
-  ctx.strokeStyle = "rgba(244,244,244,0.95)"; ctx.lineWidth = 1.6;
+  ctx.strokeStyle = "rgba(238,244,248,0.9)"; ctx.lineWidth = 1.6;
   ctx.beginPath(); ctx.arc(x, y, 11, 0, 7); ctx.stroke();
-  ctx.strokeStyle = C.blueLight;
+  ctx.strokeStyle = C.gold;
   ctx.beginPath();
   ctx.moveTo(x-16, y); ctx.lineTo(x-6, y);
   ctx.moveTo(x+6, y);  ctx.lineTo(x+16, y);
   ctx.moveTo(x, y-16); ctx.lineTo(x, y-6);
   ctx.moveTo(x, y+6);  ctx.lineTo(x, y+16);
   ctx.stroke();
-  ctx.fillStyle = C.blueLight;
+  ctx.fillStyle = C.gold;
   ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 7); ctx.fill();
+}
+
+/* subtle floating chevron that orbits the player and points at the nearest
+   power-up; brighter when the pickup is off-screen, faint when it's in view */
+function drawPickupCompass(){
+  const p = G.player;
+  if (!G.pickups.length) return;
+  let best = null, bd = Infinity;
+  for (const pu of G.pickups){ const d = dist2(pu.x, pu.y, p.x, p.y); if (d < bd){ bd = d; best = pu; } }
+  if (!best) return;
+  const def = PU_BY_ID[best.id];
+  const ang = Math.atan2(best.y - p.y, best.x - p.x);
+  const scrX = best.x - p.x + W/2, scrY = best.y - p.y + H/2;
+  const onScreen = scrX > 40 && scrX < W-40 && scrY > 70 && scrY < H-40;
+  const t = performance.now()/1000;
+  const radius = 76 + Math.sin(t*3)*3;
+  const cx = W/2 + Math.cos(ang)*radius, cy = H/2 + Math.sin(ang)*radius;
+  ctx.save();
+  ctx.globalAlpha = onScreen ? 0.26 : 0.72;
+  // little trailing dot
+  ctx.fillStyle = def.color;
+  ctx.beginPath();
+  ctx.arc(W/2 + Math.cos(ang)*(radius-13), H/2 + Math.sin(ang)*(radius-13), 2.2, 0, 7);
+  ctx.fill();
+  // chevron pointing outward toward the pickup
+  ctx.translate(cx, cy);
+  ctx.rotate(ang);
+  ctx.beginPath();
+  ctx.moveTo(11,0); ctx.lineTo(-6,-7); ctx.lineTo(-2,0); ctx.lineTo(-6,7);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+  ctx.globalAlpha = 1;
 }
 
 /* ─────────────────────────── render frame ─────────────────────────────── */
@@ -1686,6 +1818,7 @@ function renderGame(){
   }
   ctx.globalAlpha = 1;
 
+  drawPickupCompass();
   drawHud();
   if (state === "playing") drawCrosshair();
 
@@ -1694,8 +1827,8 @@ function renderGame(){
   if (ratio < 0.3){
     const a = (0.3 - ratio) / 0.3 * (0.35 + 0.1*Math.sin(performance.now()/150));
     const grad = ctx.createRadialGradient(W/2, H/2, Math.min(W,H)*0.35, W/2, H/2, Math.max(W,H)*0.7);
-    grad.addColorStop(0, "rgba(218,30,40,0)");
-    grad.addColorStop(1, "rgba(218,30,40," + a.toFixed(3) + ")");
+    grad.addColorStop(0, "rgba(201,77,82,0)");
+    grad.addColorStop(1, "rgba(201,77,82," + a.toFixed(3) + ")");
     ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
   }
 }
@@ -1731,13 +1864,13 @@ function drawAttractHazard(e, sx, sy){
   ctx.translate(sx, sy);
   ctx.save();
   ctx.rotate(Math.PI/4);
-  ctx.fillStyle = "#ffffff";
-  ctx.strokeStyle = C.redDark;
+  ctx.fillStyle = lighten(col, 0.82);
+  ctx.strokeStyle = darken(col, 0.28);
   ctx.lineWidth = Math.max(2, r*0.16);
   const hs = side*0.72;
   ctx.beginPath(); ctx.rect(-hs, -hs, hs*2, hs*2); ctx.fill(); ctx.stroke();
   ctx.restore();
-  (GLYPHS[e.type.glyph] || glyphExclaim)(ctx, r*1.05);
+  (GLYPHS[e.type.glyph] || glyphExclaim)(ctx, r*1.05, darken(col,0.55), lighten(col,0.9));
   ctx.restore();
 }
 
