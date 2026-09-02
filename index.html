@@ -314,11 +314,11 @@ form#signup{max-width:430px; margin:0 auto}
           <span><i class="chem green"></i><b>Green</b> — harmless, walk straight through</span>
           <span><i class="chem purple"></i><i class="chem orange"></i><b>Purple &amp; orange</b> — unknown… could be either</span>
         </div>
-        <p>Every chemical is colour-coded. Red hazards drain your <b>Compliance Meter</b> on touch — at zero, <b style="color:#e06b70">ECHA consumes you</b>. Green ones are harmless and your shots pass straight through them. Later on, <b>unknown substances</b> appear in purple and orange with no way to tell which are dangerous — until you collect a power-up. Every power-up gives you <b>Insight</b> for a few seconds: all chemicals show their true red or green colour.</p>
+        <p>Every chemical is colour-coded. Red hazards drain your <b>Compliance Meter</b> on touch — at zero, <b style="color:#e06b70">ECHA consumes you</b>. Green ones are harmless and your shots pass straight through them. Later on, <b>unknown substances</b> appear in purple and orange with no way to tell which are dangerous. Only <b>Compliance Navigator</b>, <b>Substance Inventory</b> and a successfully filed dossier give you <b>Insight</b> for a few seconds: all chemicals show their true red or green colour. Otherwise you stay in the dark.</p>
       </div>
       <div class="tut-card" style="grid-column:1/-1">
         <h3>4 · Power Up</h3>
-        <p style="margin-bottom:8px">Grab the floating icons — a small arrow around you always points to the nearest one. Each one pauses the action, tells you what it does, then lasts <b>12 seconds</b>:</p>
+        <p style="margin-bottom:8px">Grab the floating icons — a small arrow around you always points to the nearest one. Each one pauses the action, tells you what it does, then lasts <b id="tut-duration">8 seconds</b>:</p>
         <div id="tut-powerups"></div>
       </div>
       <div class="tut-card">
@@ -467,8 +467,8 @@ const CONFIG = {
   KILL_SCORE_HP    : 0.15,   // + maxHp * this
 
   /* power-ups are temporary: every effect lasts this long, then vanishes */
-  POWERUP_DURATION : 12,     // seconds
-  INSIGHT_DURATION : 12,     // seconds of true-colour vision after any pickup
+  POWERUP_DURATION : 8,      // seconds
+  INSIGHT_DURATION : 8,      // seconds of true-colour vision (Compliance Navigator, Substance Inventory, filed dossier)
 
   /* chemical colours & unknowns */
   UNKNOWN_FROM_WAVE     : 3,     // purple/orange substances appear from this wave
@@ -726,8 +726,9 @@ const ICONS = {};                       // id -> HTMLImageElement
 for (const k in ICON_SVG) ICONS[k] = svgImg(ICON_SVG[k]);
 
 /* ─────────────────────────── power-up defs ────────────────────────────── */
-/* Every power-up lasts CONFIG.POWERUP_DURATION seconds and also grants
-   Insight (true red/green colours) for CONFIG.INSIGHT_DURATION seconds.
+/* Every power-up lasts CONFIG.POWERUP_DURATION seconds. Only the ones marked
+   insight:true (the main application power-ups) also reveal the true
+   red/green colour of unknown chemicals for CONFIG.INSIGHT_DURATION seconds.
    Names are placeholders — the concept and effect are what matter here. */
 const POWERUPS = [
   { id:"connect", name:"Connect", color:"#4589ff", effect:"cleanse",
@@ -738,14 +739,14 @@ const POWERUPS = [
     short:"A buddy consultant orbits you and auto-fires at hazards.",
     tut:"A buddy consultant orbits you and auto-fires at hazards.",
     msg:"Knowledge is power! A consultant joins you for a while and takes shots at the hazards on your behalf — no one navigates the regulatory landscape alone." },
-  { id:"substance", name:"Substance Inventory", color:"#33b1ff", effect:"firerate",
-    short:"Shoot twice as fast.",
-    tut:"Fire rate doubled.",
-    msg:"Know exactly what's regulated and act on it fast — your compliance blaster fires twice as quickly." },
-  { id:"navigator", name:"Compliance Navigator", color:"#ff832b", effect:"heal",
-    short:"Restores your Compliance Meter — even beyond 100% for a while.",
-    tut:"Restores the meter; anything above 100% is temporary.",
-    msg:"Clear guidance restores your Compliance Meter. If you were already in good shape it pushes you above 100% — that extra margin fades when the timer runs out, but everything up to full stays." },
+  { id:"substance", name:"Substance Inventory", color:"#33b1ff", effect:"firerate", insight:true,
+    short:"Shoot twice as fast — and see every chemical's true colour.",
+    tut:"Fire rate doubled + Insight: unknowns show their true colour.",
+    msg:"Know exactly what's regulated and act on it fast — your compliance blaster fires twice as quickly, and with the inventory in hand every purple and orange unknown shows its true red or green colour." },
+  { id:"navigator", name:"Compliance Navigator", color:"#ff832b", effect:"heal", insight:true,
+    short:"Restores your Compliance Meter — and reveals every chemical's true colour.",
+    tut:"Restores the meter (above 100% is temporary) + Insight: unknowns show their true colour.",
+    msg:"Clear guidance restores your Compliance Meter and shows every purple and orange unknown in its true red or green colour. If you were already in good shape the meter goes above 100% — that extra margin fades when the timer runs out, but everything up to full stays." },
   { id:"sds", name:"SDS Manager", color:"#fa4d56", effect:"damage",
     short:"Your shots deal double damage.",
     tut:"Damage doubled.",
@@ -1119,7 +1120,11 @@ function newGame(){
   state = "playing";
   updateCursor();
 }
-function updateCursor(){ canvas.style.cursor = (state === "playing" && mouse.active) ? "none" : "default"; }
+function updateCursor(){
+  const filing = G && G.mini;
+  canvas.style.cursor = (state === "playing" && mouse.active && !filing) ? "none"
+                      : (filing && G.mini.drag ? "grabbing" : "default");
+}
 
 /* which colour class does a freshly spawned chemical get? */
 function pickKind(){
@@ -1228,7 +1233,7 @@ function hazardsByDistance(maxDist){
 /* ───────────────────── power-ups (all temporary) ──────────────────────── */
 function applyPickup(id){
   const p = G.player, def = PU_BY_ID[id], D = CONFIG.POWERUP_DURATION;
-  G.insightT = Math.max(G.insightT, CONFIG.INSIGHT_DURATION);     // every pickup = Insight
+  if (def.insight) G.insightT = Math.max(G.insightT, CONFIG.INSIGHT_DURATION);   // main apps grant Insight
   switch (def.effect){
     case "cleanse":
       p.fx.cleanse = D; p.cleanseCd = 0;
@@ -1321,7 +1326,7 @@ function scheduleMini(){
       kicker: "Submission deadline",
       title: "File your compliance documents!",
       effect: "Drag every document into the folder — fast",
-      msg: "The regulator wants your paperwork now. Drag each compliance document into the ECHA / EPA folder. You can't move or shoot until it's all filed, and the hazards keep coming — so be quick. Submit in time and a batch of chemicals is reclassified harmless. From now on this happens without warning.",
+      msg: "The regulator wants your paperwork now. Drag each compliance document into the ECHA / EPA folder. You can't move or shoot until it's all filed, and the hazards keep coming — so be quick. Submit in time and a batch of chemicals is reclassified harmless — and you gain Insight into the rest. From now on this happens without warning.",
     }, startMini);
   } else startMini();
 }
@@ -1347,6 +1352,7 @@ function startMini(){
   G.mini = { agency, docs: items, need, filed: 0, t: CONFIG.MINI_TIME_LIMIT, limit: CONFIG.MINI_TIME_LIMIT,
              drag: null, done: false, doneT: 0, result: null, msg: "", flash: "", flashT: 0 };
   clearSticks(); mouse.down = false;
+  updateCursor();          // the mouse pointer must stay visible for dragging on a computer
   Sfx.alarm();
 }
 function docSize(){ const w = clamp(Math.min(W, H) * 0.17, 56, 84); return { w, h: w*1.22 }; }
@@ -1367,7 +1373,7 @@ function miniPointerDown(id, x, y){
     if (hitRect(docRect(d), x, y, 6)){
       m.drag = { id, d, dx: d.fx*W - x, dy: d.fy*H - y };
       m.docs.splice(i, 1); m.docs.push(d);       // bring to front
-      Sfx.ui();
+      updateCursor(); Sfx.ui();
       return;
     }
   }
@@ -1383,6 +1389,7 @@ function miniPointerUp(id){
   const m = G.mini;
   if (!m.drag || m.drag.id !== id) return;
   const d = m.drag.d; m.drag = null;
+  updateCursor();
   if (m.done) return;
   const f = folderRect();
   if (hitRect(f, d.fx*W, d.fy*H, 14)){
@@ -1408,7 +1415,8 @@ function finishMini(success){
     hz.slice(0, n).forEach(makeHarmless);
     G.score += 150;
     p.iframes = Math.max(p.iframes, 1.5);
-    m.msg = "DOSSIER SUBMITTED!  +150  ·  " + n + " chemicals reclassified harmless";
+    G.insightT = Math.max(G.insightT, CONFIG.INSIGHT_DURATION);   // a filed dossier brings Insight too
+    m.msg = "DOSSIER SUBMITTED!  +150  ·  " + n + " chemicals reclassified harmless  ·  INSIGHT";
     Sfx.win();
   } else {
     const n = 5 + Math.floor(G.wave/2);
@@ -1512,7 +1520,7 @@ function gameUpdate(dt){
   // mini game clock (the player is busy filing — no moving, no shooting)
   if (mini){
     if (!mini.done){ mini.t -= dt; if (mini.t <= 0) finishMini(false); }
-    else { mini.doneT -= dt; if (mini.doneT <= 0) G.mini = null; }
+    else { mini.doneT -= dt; if (mini.doneT <= 0){ G.mini = null; updateCursor(); } }
     if (mini.flashT > 0) mini.flashT -= dt;
     for (const d of mini.docs) if (d.bounceT > 0) d.bounceT -= dt;
   }
@@ -2773,6 +2781,7 @@ function boot(){
   $("consent-text").textContent = CONFIG.CONSENT_TEXT;
   $("storage-note").textContent = CONFIG.STORAGE_NOTE;
   $("btn-helix").href = CONFIG.HELIX_SIGNUP_URL;
+  $("tut-duration").textContent = CONFIG.POWERUP_DURATION + " seconds";
   buildTutorial();
   updateMuteButtons();
 

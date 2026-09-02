@@ -6,7 +6,7 @@ platform by Yordas-3E.
 
 Fight off swarming chemicals in a laboratory maze. Every chemical is **colour-coded** — red is
 hazardous, green is harmless, and later on purple and orange *unknowns* appear that could be either.
-Grab power-ups for a few seconds of help (and **Insight** into which chemicals are really dangerous),
+Grab power-ups for a few seconds of help (the main application ones also give **Insight** into which chemicals are really dangerous),
 file your compliance documents before the deadline, brace for new regulations, and survive as long
 as you can. When your **Compliance Meter** hits zero, you are consumed by ECHA.
 
@@ -49,11 +49,12 @@ Chemicals carry no names — the colour is the only signal, so it reads on a sma
 | 🟢 **Green** | Harmless — walk straight through, shots pass through. They disperse on their own after a while. |
 | 🟣 🟠 **Purple / orange** | *Unknown* — each one is secretly hazardous or harmless (55 % hazardous by default). They appear from wave 3. |
 
-Collecting **any** power-up grants **Insight** for 12 s: every unknown shows its true red or green
+Only the two main application power-ups — **Compliance Navigator** and **Substance Inventory** — and a
+**successfully filed dossier** grant **Insight** for 8 s: every unknown shows its true red or green
 colour (gold bar under the meter, gold frame around the screen). When it runs out, they go back to
-purple and orange.
+purple and orange. Everything else leaves you in the dark.
 
-### Power-ups (all temporary — 12 seconds, then gone)
+### Power-ups (all temporary — 8 seconds, then gone)
 
 Power-ups drop frequently (first one after ~6 s, then every 6–10 s, two at a time from wave 4). A
 small chevron orbiting the player always points to the nearest one. Collecting one pauses the
@@ -65,8 +66,8 @@ again restarts its timer. Names are placeholders — the concept is what matters
 | --- | --- |
 | **Connect** | The nearest hazards (up to 6) are reclassified harmless and turn green; while it lasts, any hazard that comes within reach is talked down too. |
 | **Knowledge Hub** | A buddy consultant orbits you and auto-fires at hazards (a second pickup adds a second buddy). |
-| **Substance Inventory** | Fire rate doubled. |
-| **Compliance Navigator** | Heals 50. Anything up to 100 % is permanent; anything above (up to 150 %) is *overheal* that reverts to 100 % when the timer ends. |
+| **Substance Inventory** | Fire rate doubled. Grants **Insight**. |
+| **Compliance Navigator** | Heals 50. Anything up to 100 % is permanent; anything above (up to 150 %) is *overheal* that reverts to 100 % when the timer ends. Grants **Insight**. |
 | **SDS Manager** | Damage doubled. |
 | **AI Booster** | "God mode": invincible, walk through walls and chemicals; hazards you touch are neutralised. When it ends you are stepped out onto the nearest floor tile. |
 
@@ -80,12 +81,13 @@ orange unknown is reclassified **red**.
 
 From ~55 s into the run (then every 70–95 s) a **submission deadline** hits. The first time, a pop-up
 explains it; after that it just happens. An **ECHA / EPA folder** appears and the player must drag
-every compliance document into it (touch or mouse). They cannot move or shoot meanwhile, and the
+every compliance document into it (touch on a phone, mouse on a computer — the pointer stays visible
+for this). They cannot move or shoot meanwhile, and the
 hazards keep coming (at 70 % speed), so it is all about speed. From the second deadline onwards a
 decoy document (lunch menu, cat memes…) is mixed in — filing it costs 50 points.
 
-- **Filed in time (15 s):** +150 points, 1.5 s of invulnerability, and ~45 % of the hazards (at least
-  four) are reclassified green for a breather.
+- **Filed in time (15 s):** +150 points, 1.5 s of invulnerability, 8 s of Insight, and ~45 % of the
+  hazards (at least four) are reclassified green for a breather.
 - **Deadline missed:** a squad of red enforcement hazards spawns.
 
 ## Leaderboard & lead capture
