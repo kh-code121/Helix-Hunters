@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a1826">
 <title>Helix Hunters — Survive the Regulatory Landscape</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E">
 <style>
@@ -31,22 +35,27 @@
   --purple:#c78d6e;      /* → 3E terracotta */
   --magenta:#c78d6e;     /* → 3E terracotta */
   --navy:#133151;        /* 3E primary navy */
+  /* chemical colours (must match KIND in the script) */
+  --chem-red:#f0433f; --chem-green:#3fd46f; --chem-purple:#ad64ff; --chem-orange:#ffa22b;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0; overflow:hidden; background:var(--bg); color:var(--text);
   font-family:"IBM Plex Sans","Segoe UI",Inter,system-ui,-apple-system,sans-serif;
-  -webkit-user-select:none; user-select:none;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  position:fixed; inset:0; overscroll-behavior:none; -webkit-tap-highlight-color:transparent;
 }
-#game{position:fixed; inset:0; display:block}
+#game{position:fixed; inset:0; display:block; touch-action:none}
 .hidden{display:none !important}
+body.touch .desk-only{display:none !important}
+body:not(.touch) .touch-only{display:none !important}
 
 /* ---------- screens ---------- */
 .screen{
   position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
   background:rgba(13,13,13,.78);
-  backdrop-filter:blur(2px); z-index:10; padding:18px;
+  backdrop-filter:blur(2px); z-index:10; padding:14px;
 }
 .panel{
   background:var(--layer);
@@ -54,6 +63,7 @@ body{
   border-radius:6px;
   padding:34px 42px; width:min(94vw,780px); max-height:92vh; overflow:auto;
   box-shadow:0 12px 48px rgba(0,0,0,.65);
+  -webkit-overflow-scrolling:touch;
 }
 .panel::-webkit-scrollbar{width:10px}
 .panel::-webkit-scrollbar-thumb{background:var(--layer2); border-radius:6px}
@@ -74,6 +84,7 @@ body{
   padding:14px 26px; border-radius:4px; cursor:pointer; text-align:center;
   border:1px solid var(--border); background:var(--layer2); color:var(--text);
   transition:background .1s, border-color .1s, box-shadow .1s; font-size:15px;
+  min-height:48px; touch-action:manipulation;
 }
 .btn:hover{background:#26527a; border-color:#3d6a97}
 .btn:active{transform:translateY(1px)}
@@ -104,7 +115,7 @@ p.subhead{margin:0 0 24px; text-align:center; color:var(--text2); font-size:14px
 .tut-card h3{margin:0 0 8px; font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--cyan)}
 .tut-card p{margin:0; font-size:13.5px; line-height:1.5; color:var(--text2)}
 .tut-card p b{color:var(--text)}
-.tut-visual{display:flex; align-items:center; gap:14px; margin:10px 0 12px; min-height:64px}
+.tut-visual{display:flex; align-items:center; gap:14px; margin:10px 0 12px; min-height:64px; flex-wrap:wrap}
 kbd{
   display:inline-block; min-width:34px; padding:7px 0; text-align:center; font-weight:700;
   font-family:"IBM Plex Mono",Consolas,Menlo,monospace; font-size:14px; color:var(--blue-light);
@@ -121,6 +132,22 @@ kbd{
 .meter-demo{width:100%; height:16px; border:1px solid var(--border); border-radius:4px; overflow:hidden; background:var(--bg)}
 .meter-demo i{display:block; height:100%; width:68%; background:linear-gradient(90deg,var(--red),var(--yellow),var(--green)); animation:meterPulse 3s ease-in-out infinite}
 @keyframes meterPulse{0%,100%{width:75%}50%{width:30%}}
+/* chemical colour legend */
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; margin:8px 0 10px}
+.legend span{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:var(--text)}
+.chem{display:inline-block; width:16px; height:16px; border-radius:50%; flex:0 0 auto}
+.chem.red{background:var(--chem-red); box-shadow:0 0 10px var(--chem-red)}
+.chem.green{background:var(--chem-green); box-shadow:0 0 10px var(--chem-green)}
+.chem.purple{background:var(--chem-purple); box-shadow:0 0 10px var(--chem-purple)}
+.chem.orange{background:var(--chem-orange); box-shadow:0 0 10px var(--chem-orange)}
+/* twin-stick tutorial diagram */
+.stick-demo{display:inline-flex; gap:18px; align-items:center}
+.stick{width:54px; height:54px; border-radius:50%; border:2px dashed rgba(158,214,234,.7); position:relative}
+.stick::after{content:""; position:absolute; width:22px; height:22px; border-radius:50%; background:var(--blue-light); left:50%; top:50%; transform:translate(-50%,-50%); animation:stickWobble 2.4s ease-in-out infinite}
+.stick.fire::after{background:var(--blue)}
+@keyframes stickWobble{0%,100%{transform:translate(-50%,-50%)}25%{transform:translate(-20%,-70%)}50%{transform:translate(-80%,-30%)}75%{transform:translate(-40%,-10%)}}
+.pause-demo{display:inline-flex; width:40px; height:40px; border-radius:6px; background:rgba(38,38,38,.9); border:1.5px solid var(--cyan); align-items:center; justify-content:center; gap:5px}
+.pause-demo i{display:block; width:5px; height:16px; background:var(--text); border-radius:1px}
 
 /* ---------- leaderboard ---------- */
 table.board{width:100%; border-collapse:collapse; margin:6px 0 4px}
@@ -137,12 +164,13 @@ table.board tr.me td:first-child{border-left:3px solid var(--blue)}
 .board-empty{text-align:center; color:var(--text2); padding:26px 0; font-style:italic}
 .privacy-note{font-size:11px; color:var(--text2); text-align:center; margin-top:10px}
 
-/* ---------- power-up modal ---------- */
+/* ---------- power-up / event modal ---------- */
 .pu-panel{max-width:520px; text-align:center; border-top-color:var(--pu-c,var(--blue))}
 .pu-panel img{
   width:96px; height:96px; background:#f4f4f4; border-radius:10px; padding:8px;
   box-shadow:0 0 40px var(--pu-c,rgba(106,181,212,.5)); margin:4px auto 14px; display:block;
 }
+.modal-emoji{font-size:64px; line-height:1; margin:4px auto 14px; filter:drop-shadow(0 0 22px var(--pu-c,rgba(106,181,212,.6)))}
 .pu-panel .pu-kicker{font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--pu-c,var(--cyan)); margin:0 0 4px}
 .pu-panel h2{margin:0 0 10px; font-size:28px; color:var(--text)}
 .pu-panel .pu-effect{
@@ -173,13 +201,13 @@ form#signup{max-width:430px; margin:0 auto}
 .field{margin-bottom:12px}
 .field label{display:block; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--text2); margin-bottom:5px}
 .field input[type=text],.field input[type=email]{
-  width:100%; font:inherit; font-size:15px; color:var(--text); padding:11px 13px;
+  width:100%; font:inherit; font-size:16px; color:var(--text); padding:11px 13px;
   background:var(--bg); border:none; border-bottom:1px solid var(--border); border-radius:0; outline:none;
   -webkit-user-select:text; user-select:text;
 }
 .field input:focus{border-bottom-color:var(--blue); box-shadow:inset 0 -1px 0 var(--blue)}
 .consent{display:flex; gap:10px; align-items:flex-start; font-size:12.5px; color:var(--text2); line-height:1.45; margin:14px 0 4px; cursor:pointer}
-.consent input{margin-top:2px; accent-color:var(--blue); width:16px; height:16px; flex:0 0 auto}
+.consent input{margin-top:2px; accent-color:var(--blue); width:18px; height:18px; flex:0 0 auto}
 .form-err{color:var(--red); font-size:12.5px; min-height:16px; margin:6px 0 2px; text-align:center}
 .storage-note{font-size:11px; color:var(--text2); text-align:center; margin-top:10px; line-height:1.5}
 
@@ -194,6 +222,34 @@ form#signup{max-width:430px; margin:0 auto}
 
 /* pause corner hint */
 .corner-hint{position:fixed; right:14px; bottom:8px; z-index:5; color:rgba(198,198,198,.7); font-size:11px; letter-spacing:.06em; pointer-events:none}
+
+/* ---------- phone-sized screens ---------- */
+@media (max-width:640px), (max-height:540px){
+  .screen{padding:8px}
+  .panel{padding:18px 16px; width:min(97vw,780px); max-height:96vh; border-radius:8px}
+  .logo{font-size:clamp(30px,10vw,58px)}
+  .tagline{margin-bottom:18px; letter-spacing:.18em}
+  .menu-buttons{gap:10px}
+  .btn{padding:12px 16px; font-size:15px}
+  .btn-row{gap:8px; margin-top:16px}
+  .btn-row .btn{min-width:0; flex:1 1 130px}
+  h2.head{font-size:20px}
+  p.subhead{margin-bottom:14px; font-size:13px}
+  .tut-card{padding:12px 13px}
+  .tut-visual{min-height:0; margin:6px 0 8px}
+  .stats-row{gap:8px}
+  .stats-row .stat{min-width:0; flex:1 1 40%; padding:8px 6px}
+  .stat b{font-size:20px} .stat.score b{font-size:24px}
+  .pu-panel img{width:72px; height:72px}
+  .modal-emoji{font-size:52px}
+  .pu-panel h2{font-size:22px}
+  .pu-panel .pu-msg{font-size:13.5px}
+  .footer-note{margin-top:18px}
+  .cta{padding:14px 12px}
+  .legend{flex-direction:column; gap:6px}
+  table.board td{padding:8px 6px; font-size:14px}
+  table.board td.meta{font-size:11px}
+}
 </style>
 </head>
 <body>
@@ -210,7 +266,7 @@ form#signup{max-width:430px; margin:0 auto}
       <button class="btn" id="btn-how">❓ How to Play</button>
       <button class="btn" id="btn-mute">🔊 Sound: On</button>
     </div>
-    <p class="footer-note">Powered by <b>Helix</b> — the regulatory compliance platform by Yordas-3E</p>
+    <p class="footer-note" id="menu-footer">Powered by <b>Helix</b> — the regulatory compliance platform by Yordas-3E</p>
   </div>
 </div>
 
@@ -223,17 +279,20 @@ form#signup{max-width:430px; margin:0 auto}
       <div class="tut-card">
         <h3>1 · Move</h3>
         <div class="tut-visual">
-          <span class="keys-wasd">
+          <span class="touch-only stick-demo"><span class="stick"></span></span>
+          <span class="keys-wasd desk-only">
             <span class="spacer"><kbd>Q</kbd></span><kbd>W</kbd><span class="spacer"><kbd>E</kbd></span>
             <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
           </span>
         </div>
-        <p>Use <b>W A S D</b> to run through the laboratory maze. Keep moving — the hazards never stop.</p>
+        <p class="touch-only">Touch and drag anywhere on the <b>left half</b> of the screen to run through the laboratory maze. Keep moving — the hazards never stop.</p>
+        <p class="desk-only">Use <b>W A S D</b> to run through the laboratory maze. Keep moving — the hazards never stop.</p>
       </div>
       <div class="tut-card">
         <h3>2 · Aim &amp; Fire</h3>
         <div class="tut-visual">
-          <svg width="46" height="64" viewBox="0 0 46 64">
+          <span class="touch-only stick-demo"><span class="stick fire"></span></span>
+          <svg class="desk-only" width="46" height="64" viewBox="0 0 46 64">
             <rect x="3" y="3" width="40" height="58" rx="20" fill="none" stroke="#c6c6c6" stroke-width="2.5"/>
             <path d="M3 26 h40" stroke="#c6c6c6" stroke-width="2"/>
             <path d="M23 3 v23" stroke="#c6c6c6" stroke-width="2"/>
@@ -245,22 +304,33 @@ form#signup{max-width:430px; margin:0 auto}
             <circle cx="27" cy="27" r="3" fill="#6ab5d4"/>
           </svg>
         </div>
-        <p><b>Aim with the mouse</b>, then <b>hold left-click</b> to fire your compliance blaster. Release to stop.</p>
+        <p class="touch-only">Touch and drag on the <b>right half</b> to aim — your compliance blaster <b>fires automatically</b> while your thumb is down.</p>
+        <p class="desk-only"><b>Aim with the mouse</b>, then <b>hold left-click</b> to fire your compliance blaster. Release to stop.</p>
       </div>
       <div class="tut-card" style="grid-column:1/-1">
-        <h3>3 · Power Up With Helix</h3>
-        <p style="margin-bottom:8px">Grab the floating Helix icons — a small arrow around you always points to the nearest one. Each pauses the action and tells you what it does:</p>
+        <h3>3 · Know Your Colours</h3>
+        <div class="legend">
+          <span><i class="chem red"></i><b>Red</b> — hazardous, don't touch</span>
+          <span><i class="chem green"></i><b>Green</b> — harmless, walk straight through</span>
+          <span><i class="chem purple"></i><i class="chem orange"></i><b>Purple &amp; orange</b> — unknown… could be either</span>
+        </div>
+        <p>Every chemical is colour-coded. Red hazards drain your <b>Compliance Meter</b> on touch — at zero, <b style="color:#e06b70">ECHA consumes you</b>. Green ones are harmless and your shots pass straight through them. Later on, <b>unknown substances</b> appear in purple and orange with no way to tell which are dangerous — until you collect a power-up. Every power-up gives you <b>Insight</b> for a few seconds: all chemicals show their true red or green colour.</p>
+      </div>
+      <div class="tut-card" style="grid-column:1/-1">
+        <h3>4 · Power Up</h3>
+        <p style="margin-bottom:8px">Grab the floating icons — a small arrow around you always points to the nearest one. Each one pauses the action, tells you what it does, then lasts <b>12 seconds</b>:</p>
         <div id="tut-powerups"></div>
       </div>
       <div class="tut-card">
-        <h3>4 · Know Your Hazards</h3>
-        <div class="tut-visual"><div class="meter-demo"><i></i></div></div>
-        <p>Every enemy is a <b>hazardous chemical</b> wearing its GHS pictogram — SVHCs, PFAS, endocrine disruptors and worse. Each hit drains your <b>Compliance Meter</b>. At zero… <b style="color:#e06b70">ECHA consumes you.</b></p>
+        <h3>5 · Deadlines &amp; Regulations</h3>
+        <div class="tut-visual"><span style="font-size:34px">📁 📄 📜</span></div>
+        <p>Every so often a <b>submission deadline</b> hits: drag every compliance document into the <b>ECHA / EPA folder</b> — fast, because you can't move or shoot until it's filed. Succeed and a batch of chemicals turns green. And when the regulators <b>publish new rules</b>, expect more hazards… or unknowns suddenly confirmed red.</p>
       </div>
       <div class="tut-card">
-        <h3>5 · Bank Your Score</h3>
-        <div class="tut-visual"><kbd style="min-width:64px">ESC</kbd></div>
-        <p>Score grows every second you survive, plus a bonus per hazard neutralised. Press <b>Esc</b> to pause — you can exit and <b>bank your score</b> to the leaderboard at any time.</p>
+        <h3>6 · Bank Your Score</h3>
+        <div class="tut-visual"><span class="pause-demo touch-only"><i></i><i></i></span><kbd class="desk-only" style="min-width:64px">ESC</kbd></div>
+        <p class="touch-only">Score grows every second you survive, plus a bonus per hazard neutralised. Tap the <b>pause button</b> (top-right) — you can exit and <b>bank your score</b> to the leaderboard at any time.</p>
+        <p class="desk-only">Score grows every second you survive, plus a bonus per hazard neutralised. Press <b>Esc</b> to pause — you can exit and <b>bank your score</b> to the leaderboard at any time.</p>
       </div>
     </div>
     <div class="btn-row">
@@ -274,7 +344,7 @@ form#signup{max-width:430px; margin:0 auto}
 <div class="screen hidden" id="screen-board">
   <div class="panel">
     <h2 class="head">🏆 Leaderboard</h2>
-    <p class="subhead">The most compliant hunters on this machine</p>
+    <p class="subhead">The most compliant hunters on this device</p>
     <div id="board-holder"></div>
     <p class="privacy-note">Only usernames are ever shown. Contact details stay private on this device.</p>
     <div class="btn-row">
@@ -294,20 +364,21 @@ form#signup{max-width:430px; margin:0 auto}
       <button class="btn" id="btn-pause-mute">🔊 Sound: On</button>
       <button class="btn btn-danger" id="btn-endrun">🏁 Exit &amp; Bank Score</button>
     </div>
-    <p class="footer-note">Esc to resume</p>
+    <p class="footer-note desk-only">Esc to resume</p>
   </div>
 </div>
 
-<!-- ============================ POWER-UP MODAL ============================ -->
-<div class="screen hidden" id="screen-powerup">
-  <div class="panel pu-panel" id="pu-panel">
-    <img id="pu-icon" alt="">
-    <p class="pu-kicker">⚡ Power-up collected</p>
-    <h2 id="pu-name"></h2>
-    <div><span class="pu-effect" id="pu-effect"></span></div>
-    <p class="pu-msg" id="pu-msg"></p>
-    <button class="btn btn-primary" id="btn-pu-continue" style="min-width:220px">▶ Continue Hunting</button>
-    <p class="pu-hint">Space, Enter or Esc also continue</p>
+<!-- ============================ POWER-UP / EVENT MODAL ============================ -->
+<div class="screen hidden" id="screen-modal">
+  <div class="panel pu-panel" id="modal-panel">
+    <img id="modal-icon" alt="">
+    <div id="modal-emoji" class="modal-emoji hidden"></div>
+    <p class="pu-kicker" id="modal-kicker"></p>
+    <h2 id="modal-title"></h2>
+    <div><span class="pu-effect" id="modal-effect"></span></div>
+    <p class="pu-msg" id="modal-msg"></p>
+    <button class="btn btn-primary" id="btn-modal-continue" style="min-width:220px">▶ Continue Hunting</button>
+    <p class="pu-hint desk-only">Space, Enter or Esc also continue</p>
   </div>
 </div>
 
@@ -357,8 +428,7 @@ form#signup{max-width:430px; margin:0 auto}
       <div id="ov-board-holder"></div>
       <div class="cta">
         <h3>⚡ Power up for real</h3>
-        <p>Loved the power-ups? <b>Connect, Knowledge Hub, Substance Inventory, Compliance Navigator</b> and
-           <b>SDS Manager</b> are real Helix apps — everything you need to survive the actual regulatory landscape.</p>
+        <p>Loved the power-ups? Everything you need to survive the <b>actual</b> regulatory landscape lives in Helix.</p>
         <a class="btn btn-primary" id="btn-helix" href="https://helix.yordasgroup.com" target="_blank" rel="noopener">🚀 Sign up / Log in to Helix</a>
         <p class="redirect-note" id="redirect-note">You'll be redirected to Helix in a new tab — the game stays open for the next hunter.</p>
       </div>
@@ -377,7 +447,8 @@ form#signup{max-width:430px; margin:0 auto}
 /* ═════════════════════════════════════════════════════════════════════════
    HELIX HUNTERS — a conference survival shooter for Helix (Yordas-3E)
    Single self-contained file: open it in any modern browser, no internet
-   needed. See README.md for booth-staff notes (CSV export, reset, config).
+   needed. Built phone-first (twin-stick touch controls) but keyboard and
+   mouse still work. See README.md for booth-staff notes.
    UI palette: 3E brand colours (sampled from 3eco.com).
    ═════════════════════════════════════════════════════════════════════════ */
 
@@ -394,6 +465,27 @@ const CONFIG = {
   SCORE_PER_SEC    : 10,
   KILL_SCORE_BASE  : 20,
   KILL_SCORE_HP    : 0.15,   // + maxHp * this
+
+  /* power-ups are temporary: every effect lasts this long, then vanishes */
+  POWERUP_DURATION : 12,     // seconds
+  INSIGHT_DURATION : 12,     // seconds of true-colour vision after any pickup
+
+  /* chemical colours & unknowns */
+  UNKNOWN_FROM_WAVE     : 3,     // purple/orange substances appear from this wave
+  UNKNOWN_HAZARD_CHANCE : 0.55,  // chance a purple/orange chemical is secretly hazardous
+  GREEN_SHARE           : 0.32,  // share of known chemicals that are harmless green
+
+  /* "new regulations published" events (pause + pop-up) */
+  REG_FIRST : 45,            // seconds into the run
+  REG_EVERY : [40, 60],      // then every N..M seconds
+
+  /* compliance-document submission mini game */
+  MINI_FIRST      : 55,      // seconds into the run
+  MINI_EVERY      : [70, 95],
+  MINI_TIME_LIMIT : 15,      // seconds to file everything
+
+  /* camera zoom used on phone-sized screens (1 = desktop scale) */
+  MOBILE_ZOOM : 0.85,
 };
 
 /* 3E palette for canvas drawing (legacy keys kept, remapped to 3E colours).
@@ -417,8 +509,9 @@ const dist2 = (ax,ay,bx,by) => { const dx=ax-bx, dy=ay-by; return dx*dx+dy*dy; }
 const fmtTime = s => { s=Math.floor(s); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const pick = a => a[Math.floor(Math.random()*a.length)];
 
-/* hex colour utilities (for tinting enemy pictograms to their aura) */
+/* hex colour utilities (for tinting chemical pictograms to their colour) */
 const _hexCache = {};
 function hexRgb(h){
   if (_hexCache[h]) return _hexCache[h];
@@ -491,6 +584,15 @@ function wipeData(){
   flashHint("All local game data erased");
   if (state === "board") renderBoardScreen();
 }
+/* phones have no Ctrl+Shift shortcuts: tapping the menu footer 7× opens the admin menu */
+function adminMenu(){
+  const n = suLoad().length;
+  const ans = prompt("Booth admin — " + n + " sign-up(s) stored on this device.\n\nType  export  to download the CSV, or  wipe  to erase all local data.", "export");
+  if (!ans) return;
+  const a = ans.trim().toLowerCase();
+  if (a === "export") exportCsv();
+  else if (a === "wipe") wipeData();
+}
 
 /* ──────────────────────────── audio (synth) ───────────────────────────── */
 const Sfx = (() => {
@@ -541,17 +643,20 @@ const Sfx = (() => {
     kill(){ tone(300, 90, 0.16, "sawtooth", 0.09); noise(0.12, 0.06); },
     hurt(){ tone(180, 60, 0.25, "sawtooth", 0.16); noise(0.2, 0.1); },
     shield(){ tone(900, 1400, 0.12, "triangle", 0.12); },
+    cleanse(){ tone(660, 990, 0.14, "triangle", 0.1); },
     pickup(){ tone(523,523,0.09,"triangle",0.12); tone(659,659,0.09,"triangle",0.12,0.09); tone(880,880,0.14,"triangle",0.12,0.18); },
     wave(){ tone(220, 440, 0.25, "triangle", 0.1); },
+    alarm(){ tone(880, 880, 0.18, "square", 0.08); tone(660, 660, 0.18, "square", 0.08, 0.2); tone(880, 880, 0.18, "square", 0.08, 0.4); },
+    file(){ noise(0.06, 0.05); tone(1200, 1600, 0.08, "triangle", 0.09, 0.03); },
     over(){ tone(392,392,0.22,"sawtooth",0.13); tone(311,311,0.22,"sawtooth",0.13,0.22); tone(233,110,0.6,"sawtooth",0.15,0.44); },
     win(){ tone(523,523,0.15,"triangle",0.13); tone(659,659,0.15,"triangle",0.13,0.14); tone(784,784,0.15,"triangle",0.13,0.28); tone(1046,1046,0.3,"triangle",0.13,0.42); },
     ui(){ tone(600, 800, 0.06, "triangle", 0.07); },
   };
 })();
 
-/* ───────────────────── Helix app icons (inline SVG) ───────────────────── */
+/* ───────────────────── power-up icons (inline SVG) ────────────────────── */
 const NAVY = "#2e3e50", ORANGE = "#f58220", BLUE = "#4d9fdb",
-      TEAL = "#178f82", CRIMSON = "#8e1b33";
+      TEAL = "#178f82", CRIMSON = "#8e1b33", VIOLET = "#7b3fe4";
 
 function svgImg(svg){
   const img = new Image();
@@ -607,44 +712,65 @@ const ICON_SVG = {
       ' fill="#fff" stroke="'+NAVY+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
     '<path d="M43.5 14 h4.5 M42 20 h6 M41 26 h4" stroke="'+NAVY+'" stroke-width="2"/>' +
     '<path d="M31.8 40 L28.3 51.5 a3.2 3.2 0 0 0 3 4.3 h22.4 a3.2 3.2 0 0 0 3 -4.3 L52 40 q-10 7 -20.2 0 z" fill="#1d2c40"/>',
+  ai: // processor chip with a sparkle
+    '<rect x="16" y="16" width="32" height="32" rx="5" fill="#fff" stroke="'+NAVY+'" stroke-width="3"/>' +
+    '<g stroke="'+NAVY+'" stroke-width="3" stroke-linecap="round">' +
+      '<path d="M24 16 v-7 M32 16 v-7 M40 16 v-7 M24 48 v7 M32 48 v7 M40 48 v7"/>' +
+      '<path d="M16 24 h-7 M16 32 h-7 M16 40 h-7 M48 24 h7 M48 32 h7 M48 40 h7"/>' +
+    '</g>' +
+    '<rect x="22" y="22" width="20" height="20" rx="3" fill="'+VIOLET+'"/>' +
+    '<path d="M32 24.5 l2.1 5.4 5.4 2.1 -5.4 2.1 -2.1 5.4 -2.1 -5.4 -5.4 -2.1 5.4 -2.1 z" fill="#fff"/>',
 };
 
 const ICONS = {};                       // id -> HTMLImageElement
 for (const k in ICON_SVG) ICONS[k] = svgImg(ICON_SVG[k]);
 
 /* ─────────────────────────── power-up defs ────────────────────────────── */
+/* Every power-up lasts CONFIG.POWERUP_DURATION seconds and also grants
+   Insight (true red/green colours) for CONFIG.INSIGHT_DURATION seconds.
+   Names are placeholders — the concept and effect are what matter here. */
 const POWERUPS = [
-  { id:"connect", name:"Helix Connect", color:"#4589ff", effect:"buddy",
+  { id:"connect", name:"Connect", color:"#4589ff", effect:"cleanse",
+    short:"Nearby hazards are talked down and turn green.",
+    tut:"Reclassifies nearby hazards as harmless — and anything that comes close while it lasts.",
+    msg:"A quick word with the right expert and the picture clears. The closest hazardous chemicals are reclassified harmless — and any that come near you while this lasts get the same treatment." },
+  { id:"knowledge", name:"Knowledge Hub", color:"#08bdba", effect:"buddy",
     short:"A buddy consultant orbits you and auto-fires at hazards.",
-    msg:"We all need a little help sometimes! Helix Connect gives you a buddy consultant to help you shoot those enemies — no one needs to navigate the regulatory landscape alone." },
-  { id:"knowledge", name:"Knowledge Hub", color:"#08bdba", effect:"shield",
-    short:"Knowledge is power — gain a 3-hit protective shield.",
-    msg:"Knowledge is power! The Knowledge Hub protects you from harm with a shield — the next three hits bounce right off." },
+    tut:"A buddy consultant orbits you and auto-fires at hazards.",
+    msg:"Knowledge is power! A consultant joins you for a while and takes shots at the hazards on your behalf — no one navigates the regulatory landscape alone." },
   { id:"substance", name:"Substance Inventory", color:"#33b1ff", effect:"firerate",
-    short:"Know exactly what's regulated — shoot twice as fast.",
-    msg:"A powerful and fast tool to understand exactly what chemicals are regulated. The Substance Inventory power-up lets you shoot twice as fast!" },
-  { id:"navigator", name:"Compliance Navigator", color:"#ff832b", effect:"damage",
-    short:"Twice as effective — your shots deal double damage.",
-    msg:"Understanding regulations is easy with Compliance Navigator — you'll be twice as effective with it! This power-up doubles your damage!" },
-  { id:"sds", name:"SDS Manager", color:"#fa4d56", effect:"heal",
-    short:"Peace of mind — restores your Compliance Meter.",
-    msg:"SDS managed easily! The peace of mind from knowing your safety data sheets are all tracked gives your Compliance Meter a healthy boost." },
+    short:"Shoot twice as fast.",
+    tut:"Fire rate doubled.",
+    msg:"Know exactly what's regulated and act on it fast — your compliance blaster fires twice as quickly." },
+  { id:"navigator", name:"Compliance Navigator", color:"#ff832b", effect:"heal",
+    short:"Restores your Compliance Meter — even beyond 100% for a while.",
+    tut:"Restores the meter; anything above 100% is temporary.",
+    msg:"Clear guidance restores your Compliance Meter. If you were already in good shape it pushes you above 100% — that extra margin fades when the timer runs out, but everything up to full stays." },
+  { id:"sds", name:"SDS Manager", color:"#fa4d56", effect:"damage",
+    short:"Your shots deal double damage.",
+    tut:"Damage doubled.",
+    msg:"With every safety data sheet tracked you know exactly where to hit — your shots deal double damage." },
+  { id:"ai", name:"AI Booster", color:"#a56eff", effect:"god",
+    short:"Invincible — walk through walls and chemicals.",
+    tut:"God mode: invincible, walk through walls and chemicals (hazards you touch are neutralised).",
+    msg:"Supercharged! For a few seconds nothing can touch you: stroll straight through walls and chemicals — hazards that brush against you are neutralised on contact." },
 ];
 const PU_BY_ID = Object.fromEntries(POWERUPS.map(p => [p.id, p]));
 const MAX_PICKUPS_ON_MAP = 5;   // don't clutter the maze beyond this
 
-/* ─────────────────────────── enemy roster ─────────────────────────────── */
-/* Every enemy is a hazardous chemical wearing its GHS-style pictogram. */
-const ENEMY_TYPES = [
-  { id:"acid",    label:"H₂SO₄", color:"#6fdc8c", glyph:"corrosion", minWave:1 },
-  { id:"bleach",  label:"NaClO", color:"#a6c8ff", glyph:"exclaim",   minWave:1 },
-  { id:"edc",     label:"EDC",   color:"#3ddbd9", glyph:"health",    minWave:2 },
-  { id:"mercury", label:"Hg",    color:"#be95ff", glyph:"skull",     minWave:3 },
-  { id:"radio",   label:"RAD",   color:"#f1c21b", glyph:"trefoil",   minWave:4 },
-  { id:"pfas",    label:"PFAS",  color:"#ff8389", glyph:"enviro",    minWave:5 },
-  { id:"svhc",    label:"SVHC",  color:"#ff7eb6", glyph:"skull",     minWave:6 },
-  { id:"meoh",    label:"MeOH",  color:"#ff832b", glyph:"flame",     minWave:7 },
-];
+/* ─────────────────────────── chemical kinds ───────────────────────────── */
+/* Chemicals are recognised by colour only.
+     red    — hazardous               green  — harmless
+     purple / orange — unknown: each one is secretly hazardous or harmless.
+   Insight (any power-up) shows unknowns in their true red/green colour.   */
+const KIND = {
+  red:    { color:"#f0433f", hazard:true,  unknown:false },
+  green:  { color:"#3fd46f", hazard:false, unknown:false },
+  purple: { color:"#ad64ff", hazard:null,  unknown:true  },
+  orange: { color:"#ffa22b", hazard:null,  unknown:true  },
+};
+const KIND_IDS = Object.keys(KIND);
+const GLYPH_IDS = ["skull","exclaim","corrosion","trefoil","flame","enviro","health"];
 
 /* ──────────────────────────── maze / world ────────────────────────────── */
 const TILE = 64;
@@ -736,6 +862,24 @@ function freeSpot(world, clearance){
   }
   return { x: world.w/2, y: world.h/2 };
 }
+/* nearest floor tile centre to a world position (BFS over the tile grid) */
+function nearestFloor(world, x, y){
+  const { tw, th, tiles } = world;
+  const sx = clamp(Math.floor(x/TILE), 0, tw-1), sy = clamp(Math.floor(y/TILE), 0, th-1);
+  const seen = new Uint8Array(tw*th);
+  const q = [[sx,sy]]; seen[sy*tw+sx] = 1;
+  let head = 0;
+  while (head < q.length){
+    const [cx,cy] = q[head++];
+    if (tiles[cy][cx] === 0) return { x: cx*TILE + TILE/2, y: cy*TILE + TILE/2 };
+    for (const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      const nx = cx+dx, ny = cy+dy;
+      if (nx<0||ny<0||nx>=tw||ny>=th||seen[ny*tw+nx]) continue;
+      seen[ny*tw+nx] = 1; q.push([nx,ny]);
+    }
+  }
+  return { x: world.w/2, y: world.h/2 };
+}
 
 /* BFS flow field: distance (in tiles) from every floor tile to the player,
    so enemies can genuinely navigate the maze instead of hugging walls. */
@@ -816,15 +960,19 @@ function renderMiniMap(world){
 /* ─────────────────────────── canvas setup ─────────────────────────────── */
 const canvas = $("game");
 const ctx = canvas.getContext("2d");
-let W = 0, H = 0, DPR = 1;
+let W = 0, H = 0, DPR = 1, ZOOM = 1, SMALL = false;
 function resize(){
   DPR = Math.min(window.devicePixelRatio || 1, 2);
   W = window.innerWidth; H = window.innerHeight;
   canvas.width = Math.floor(W*DPR); canvas.height = Math.floor(H*DPR);
   canvas.style.width = W+"px"; canvas.style.height = H+"px";
   ctx.setTransform(DPR,0,0,DPR,0,0);
+  SMALL = Math.min(W, H) < 600;           // phone-sized viewport
+  ZOOM = SMALL ? CONFIG.MOBILE_ZOOM : 1;  // zoom the camera out a little on phones
 }
 window.addEventListener("resize", resize);
+window.addEventListener("orientationchange", () => setTimeout(resize, 60));
+if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
 resize();
 
 function rr(g,x,y,w,h,r){
@@ -837,8 +985,28 @@ function rr(g,x,y,w,h,r){
 }
 
 /* ──────────────────────────── input ───────────────────────────────────── */
+/* Touch: twin virtual sticks. A finger on the left half of the screen moves
+   (the stick appears where the finger lands), a finger on the right half
+   aims and auto-fires. Mouse + keyboard keep working for desktop play.     */
+const IS_TOUCH = (navigator.maxTouchPoints > 0) || ("ontouchstart" in window);
+if (IS_TOUCH) document.body.classList.add("touch");
+
 const keys = new Set();
-const mouse = { x: W/2, y: H/2, down: false };
+const mouse = { x: W/2, y: H/2, down: false, active: false };   // active = mouse has moved recently
+const sticks = { move: null, aim: null };                        // { id, ox, oy, x, y }
+const STICK_R = 56, STICK_DEAD = 7;
+let touchUsed = false;
+
+function stickVec(s){ // → [dx, dy] with magnitude 0..1
+  const dx = s.x - s.ox, dy = s.y - s.oy, d = Math.hypot(dx, dy);
+  if (d < STICK_DEAD) return [0, 0];
+  const m = Math.min(1, (d - STICK_DEAD) / (STICK_R - STICK_DEAD));
+  return [dx/d*m, dy/d*m];
+}
+function clearSticks(){ sticks.move = null; sticks.aim = null; }
+
+function pauseBtnRect(){ return { x: W - 54, y: 12, w: 42, h: 42 }; }
+function hitRect(r, x, y, pad){ pad = pad || 0; return x >= r.x-pad && x <= r.x+r.w+pad && y >= r.y-pad && y <= r.y+r.h+pad; }
 
 window.addEventListener("keydown", e => {
   const tag = e.target && e.target.tagName;
@@ -851,26 +1019,55 @@ window.addEventListener("keydown", e => {
   if (["w","a","s","d","arrowup","arrowdown","arrowleft","arrowright"," "].includes(k)) e.preventDefault();
   keys.add(k);
   if (k === "escape") handleEscape();
-  else if (state === "powerup" && (k === " " || k === "enter")) continueFromModal();
+  else if (state === "modal" && (k === " " || k === "enter")) continueFromModal();
   if (k === "m") Sfx.toggle();
 });
 window.addEventListener("keyup", e => keys.delete(e.key.toLowerCase()));
 window.addEventListener("blur", () => {
-  keys.clear(); mouse.down = false;
+  keys.clear(); mouse.down = false; clearSticks();
   if (state === "playing") pauseGame();
 });
 document.addEventListener("visibilitychange", () => {
   if (document.hidden && state === "playing") pauseGame();
 });
-window.addEventListener("mousemove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-canvas.addEventListener("mousedown", e => {
+
+canvas.addEventListener("pointerdown", e => {
   Sfx.unlock();
-  if (e.button === 0 && state === "playing") mouse.down = true;
+  const x = e.clientX, y = e.clientY;
+  const isMouse = e.pointerType === "mouse";
+  if (!isMouse){ touchUsed = true; mouse.active = false; }
+  if (state !== "playing") return;
+  if (G.mini){ miniPointerDown(e.pointerId, x, y); return; }          // filing documents
+  if (hitRect(pauseBtnRect(), x, y, 6)){ pauseGame(); return; }
+  if (isMouse){
+    mouse.x = x; mouse.y = y; mouse.active = true;
+    if (e.button === 0) mouse.down = true;
+    return;
+  }
+  if (x < W/2){ if (!sticks.move) sticks.move = { id:e.pointerId, ox:x, oy:y, x, y }; }
+  else        { if (!sticks.aim)  sticks.aim  = { id:e.pointerId, ox:x, oy:y, x, y }; }
 });
-window.addEventListener("mouseup", e => { if (e.button === 0) mouse.down = false; });
+window.addEventListener("pointermove", e => {
+  const x = e.clientX, y = e.clientY;
+  if (e.pointerType === "mouse"){ mouse.x = x; mouse.y = y; if (!touchUsed) mouse.active = true; }
+  if (G && G.mini && miniPointerMove(e.pointerId, x, y)) return;
+  for (const k in sticks){ const s = sticks[k]; if (s && s.id === e.pointerId){ s.x = x; s.y = y; } }
+});
+function pointerEnd(e){
+  if (e.pointerType === "mouse") mouse.down = false;
+  if (G && G.mini) miniPointerUp(e.pointerId);
+  for (const k in sticks) if (sticks[k] && sticks[k].id === e.pointerId) sticks[k] = null;
+}
+window.addEventListener("pointerup", pointerEnd);
+window.addEventListener("pointercancel", pointerEnd);
+// stop iOS/Android from scrolling, zooming or selecting while playing
+canvas.addEventListener("touchstart", e => e.preventDefault(), { passive:false });
+canvas.addEventListener("touchmove",  e => e.preventDefault(), { passive:false });
 canvas.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("gesturestart", e => e.preventDefault());
 
 function movementAxes(){
+  if (sticks.move){ const [sx, sy] = stickVec(sticks.move); if (sx || sy) return [sx, sy]; }
   let dx = 0, dy = 0;
   if (keys.has("w") || keys.has("arrowup"))    dy -= 1;
   if (keys.has("s") || keys.has("arrowdown"))  dy += 1;
@@ -881,12 +1078,13 @@ function movementAxes(){
 }
 
 /* ──────────────────────────── game state ──────────────────────────────── */
-let state = "menu";        // menu | tutorial | board | playing | paused | powerup | over
+let state = "menu";        // menu | tutorial | board | playing | paused | modal | over
 let G = null;              // current run
 let attract = null;        // menu background world
 let shakeT = 0, shakeMag = 0;
 let overInfo = null;       // data for the game-over flow
-let puModalQueue = [];     // power-up modals waiting to be shown
+let modalQueue = [];       // pop-ups waiting to be shown
+let modalCb = null;        // callback for the pop-up on screen
 
 function newGame(){
   const world = makeWorld();
@@ -898,41 +1096,69 @@ function newGame(){
       hp: 100, maxHp: 100,
       speed: 3.4,
       aim: 0, iframes: 0, moving: false, animT: 0,
-      shootCd: 0, baseRate: 0.26, rateMul: 1, baseDmg: 24, dmgMul: 1,
-      shield: 0, buddies: [], buddyRateMul: 1, buddyDmgMul: 1,
+      shootCd: 0, baseRate: 0.26, baseDmg: 24,
+      buddies: [],
+      fx: { cleanse:0, buddy:0, firerate:0, damage:0, overheal:0, god:0 },   // seconds left
+      cleanseCd: 0,
     },
     bullets: [], enemies: [], pickups: [], parts: [], floats: [],
     flow: new Uint16Array(world.tw * world.th), flowT: 0,
-    powerCounts: {},                 // id -> times collected
-    wave: 0, waveTimer: 0, waveBannerT: 0, waveBanner: "",
+    wave: 0, waveTimer: 0, waveBannerT: 0, waveBanner: "", bannerSub: "",
     trickleT: 3,
     puTimer: 6, puQueue: shuffle(POWERUPS.map(p => p.id)), puIdx: 0,
-    elapsed: 0, score: 0, kills: 0,
+    insightT: 0,
+    regT: CONFIG.REG_FIRST, regCount: 0,
+    miniT: CONFIG.MINI_FIRST, miniCount: 0, mini: null,
+    elapsed: 0, score: 0, kills: 0, shots: 0,
   };
   computeFlowField(world, spawn.x, spawn.y, G.flow);
-  puModalQueue = [];
+  modalQueue = []; modalCb = null;
+  clearSticks(); mouse.down = false;
   spawnWave();
   hideAllScreens();
   state = "playing";
-  canvas.style.cursor = "none";
+  updateCursor();
+}
+function updateCursor(){ canvas.style.cursor = (state === "playing" && mouse.active) ? "none" : "default"; }
+
+/* which colour class does a freshly spawned chemical get? */
+function pickKind(){
+  const unknownsOn = G.wave >= CONFIG.UNKNOWN_FROM_WAVE;
+  const uFrac = unknownsOn ? Math.min(0.5, 0.22 + (G.wave - CONFIG.UNKNOWN_FROM_WAVE)*0.06) : 0;
+  if (Math.random() < uFrac) return Math.random() < 0.5 ? "purple" : "orange";
+  return Math.random() < CONFIG.GREEN_SHARE ? "green" : "red";
+}
+function setKind(e, kind, hazard){
+  e.kind = kind;
+  e.hazard = hazard;
+  e.life = hazard ? Infinity : rnd(22, 36);   // harmless chemicals disperse eventually
+}
+/* the colour the player currently sees: unknowns reveal themselves under Insight */
+function visibleKind(e){
+  if (KIND[e.kind].unknown && G && G.insightT > 0) return e.hazard ? "red" : "green";
+  return e.kind;
 }
 
 function spawnWave(){
   G.wave++;
   G.waveTimer = Math.max(9, 16 - G.wave*0.35);
-  const pool = ENEMY_TYPES.filter(t => t.minWave <= G.wave);
-  const count = Math.min(8 + Math.ceil(G.wave*2.4), 30);
-  for (let i=0; i<count; i++) spawnEnemy(pool);
+  const count = Math.min(10 + Math.ceil(G.wave*2.6), 34);
+  for (let i=0; i<count; i++) spawnEnemy();
   G.waveBanner = "WAVE " + G.wave;
-  G.waveBannerT = 2.2;
+  G.waveBannerT = 2.6;
+  G.bannerSub = "";
+  if (G.wave === 1) G.bannerSub = "RED = HAZARD  ·  GREEN = HARMLESS";
+  if (G.wave === CONFIG.UNKNOWN_FROM_WAVE){ G.bannerSub = "NEW SUBSTANCES: PURPLE & ORANGE — HAZARD STATUS UNKNOWN"; G.waveBannerT = 3.6; }
   if (G.wave > 1) Sfx.wave();
 }
-function spawnEnemy(pool){
+function spawnEnemy(kindOverride){
   if (G.enemies.length > 180) return;
   const p = G.player;
-  const type = pool[Math.floor(Math.random()*pool.length)];
+  const kind = kindOverride || pickKind();
+  const K = KIND[kind];
+  const hazard = K.unknown ? Math.random() < CONFIG.UNKNOWN_HAZARD_CHANCE : K.hazard;
   const elite = G.wave >= 4 && Math.random() < Math.min(0.05 + G.wave*0.008, 0.16);
-  const size = (elite ? rnd(22,27) : rnd(11,17));
+  const size = (elite ? rnd(22,27) : rnd(12,17));
   // collision radius: never wider than fits a one-tile corridor with margin
   const colR = clamp(size*0.7, 8, TILE*0.5 - 8);        // <= 24
   // spawn out of sight but close enough to join the fight quickly,
@@ -946,15 +1172,18 @@ function spawnEnemy(pool){
   // path jitter kept small enough that the body still fits the corridor
   const jm = clamp(TILE*0.5 - colR - 6, 0, 12);
   const hp = Math.round((55 + G.wave*20) * (elite ? 2.6 : 1));
-  G.enemies.push({
-    x: s.x, y: s.y, type, size, colR, elite,
+  const e = {
+    x: s.x, y: s.y, size, colR, elite,
+    glyph: pick(GLYPH_IDS),
     hp, maxHp: hp,
     speed: (0.85 + G.wave*0.055 + rnd(0,0.35)) * (elite ? 0.7 : 1),
     jx: rnd(-jm,jm), jy: rnd(-jm,jm),   // per-enemy path jitter (breaks conga lines)
     dmg: Math.min(26, 5 + G.wave*1.5) * (elite ? 1.5 : 1),
     pulse: rnd(0, Math.PI*2),
     wanderT: 0, wx: 0, wy: 0,
-  });
+  };
+  setKind(e, kind, hazard);
+  G.enemies.push(e);
 }
 function spawnPickup(){
   if (G.pickups.length >= MAX_PICKUPS_ON_MAP) return;
@@ -978,73 +1207,248 @@ function killEnemy(e){
   const pts = Math.round(CONFIG.KILL_SCORE_BASE + e.maxHp * CONFIG.KILL_SCORE_HP);
   G.score += pts;
   addFloat(e.x, e.y - e.size - 6, "+" + pts, C.yellow);
-  burst(e.x, e.y, e.type.color, 12);
+  burst(e.x, e.y, KIND[visibleKind(e)].color, 12);
   Sfx.kill();
 }
-
-/* Recompute every buddy's live fire-rate & damage from its base plus the
-   Connect stack level and the boosts granted by matching power-ups. */
-function refreshBuddies(){
-  const p = G.player;
-  for (const b of p.buddies){
-    b.rate = Math.max(0.1, b.baseRate * p.buddyRateMul);
-    b.dmg  = b.baseDmg * p.buddyDmgMul;
-  }
+/* reclassify a hazard as harmless (green) — it lingers a while, then disperses */
+function makeHarmless(e){
+  if (!e.hazard) return;
+  setKind(e, "green", false);
+  e.life = rnd(12, 20);
+  burst(e.x, e.y, KIND.green.color, 10);
+  addFloat(e.x, e.y - e.size - 6, "✓", KIND.green.color);
+}
+function hazardsByDistance(maxDist){
+  const p = G.player, m2 = maxDist ? maxDist*maxDist : Infinity;
+  return G.enemies
+    .filter(e => e.hazard && !e.dead && dist2(e.x,e.y,p.x,p.y) < m2)
+    .sort((a,b) => dist2(a.x,a.y,p.x,p.y) - dist2(b.x,b.y,p.x,p.y));
 }
 
+/* ───────────────────── power-ups (all temporary) ──────────────────────── */
 function applyPickup(id){
-  const p = G.player, def = PU_BY_ID[id];
-  G.powerCounts[id] = (G.powerCounts[id] || 0) + 1;
+  const p = G.player, def = PU_BY_ID[id], D = CONFIG.POWERUP_DURATION;
+  G.insightT = Math.max(G.insightT, CONFIG.INSIGHT_DURATION);     // every pickup = Insight
   switch (def.effect){
+    case "cleanse":
+      p.fx.cleanse = D; p.cleanseCd = 0;
+      hazardsByDistance(420).slice(0, 6).forEach(makeHarmless);
+      Sfx.cleanse();
+      break;
     case "buddy":
-      if (p.buddies.length < 2)
-        p.buddies.push({ angle: p.buddies.length * Math.PI, cd: 0, baseRate: 0.5, baseDmg: 16, rate: 0.5, dmg: 16 });
-      else
-        p.buddies.forEach(b => { b.baseDmg += 8; b.baseRate = Math.max(0.28, b.baseRate*0.85); });
-      refreshBuddies();
+      p.fx.buddy = D;
+      if (p.buddies.length < 2) p.buddies.push({ angle: p.buddies.length * Math.PI, cd: 0 });
       break;
-    case "shield":   p.shield = Math.min(6, p.shield + 3); break;
-    case "firerate":
-      p.rateMul = Math.max(0.27, p.rateMul * 0.5);
-      p.buddyRateMul = Math.max(0.2, p.buddyRateMul / 1.5);   // buddy fires 50% faster too
-      refreshBuddies();
+    case "firerate": p.fx.firerate = D; break;
+    case "damage":   p.fx.damage = D; break;
+    case "heal":
+      // up to 100% is permanent; anything above is overheal and fades with the timer
+      p.hp = Math.min(p.maxHp * 1.5, p.hp + 50);
+      if (p.hp > p.maxHp) p.fx.overheal = D;
       break;
-    case "damage":
-      p.dmgMul = Math.min(8, p.dmgMul * 2);
-      p.buddyDmgMul = Math.min(8, p.buddyDmgMul * 1.5);       // buddy hits 50% harder too
-      refreshBuddies();
-      break;
-    case "heal":     p.hp = Math.min(p.maxHp, p.hp + 35); break;
+    case "god": p.fx.god = D; break;
   }
   Sfx.pickup();
-  queuePowerupModal(def);
+  showModal({
+    icon: def.id, color: def.color,
+    kicker: "⚡ Power-up collected · " + D + " seconds",
+    title: def.name, effect: def.short, msg: def.msg,
+  });
+}
+function tickEffects(dt){
+  const p = G.player;
+  for (const k in p.fx){
+    if (p.fx[k] <= 0) continue;
+    p.fx[k] -= dt;
+    if (p.fx[k] <= 0){ p.fx[k] = 0; endEffect(k); }
+  }
+  if (G.insightT > 0) G.insightT -= dt;
+}
+function endEffect(k){
+  const p = G.player;
+  if (k === "buddy") p.buddies = [];
+  if (k === "overheal") p.hp = Math.min(p.hp, p.maxHp);
+  if (k === "god") ejectPlayer();
+}
+/* god mode lets you walk through walls; when it ends, step out onto the nearest floor */
+function ejectPlayer(){
+  const p = G.player, world = G.world;
+  if (!circleBlocked(world, p.x, p.y, p.r)) return;
+  const s = nearestFloor(world, p.x, p.y);
+  p.x = s.x; p.y = s.y;
+  burst(p.x, p.y, C.gold, 10);
 }
 
-/* power-up modal: pause the action so the player can read what they got */
-function queuePowerupModal(def){
-  puModalQueue.push(def);
-  if (state === "playing") showPowerupModal();
+/* ───────────────── "new regulations" events (pause + pop-up) ──────────── */
+function fireRegulation(){
+  const agency = Math.random() < 0.5 ? "ECHA" : "EPA";
+  const full = agency === "ECHA" ? "The European Chemicals Agency" : "The US Environmental Protection Agency";
+  const unknowns = G.enemies.filter(e => KIND[e.kind].unknown && !e.dead);
+  G.regCount++;
+  Sfx.alarm();
+  if (unknowns.length >= 3 && Math.random() < 0.6){
+    for (const e of unknowns){ setKind(e, "red", true); burst(e.x, e.y, KIND.red.color, 6); }
+    showModal({
+      emoji: "📜", color: KIND.red.color,
+      kicker: agency + " · Regulatory update",
+      title: "New regulations published!",
+      effect: unknowns.length + " substances reclassified as hazardous",
+      msg: full + " has just published new rules: every purple and orange chemical in the landscape is now a confirmed hazard. Red means run.",
+    });
+  } else {
+    const n = irnd(6, 8 + G.wave);
+    for (let i=0; i<n; i++) spawnEnemy(Math.random() < 0.7 ? "red" : (Math.random() < 0.5 ? "purple" : "orange"));
+    showModal({
+      emoji: "📜", color: KIND.orange.color,
+      kicker: agency + " · Regulatory update",
+      title: "New regulations published!",
+      effect: n + " newly regulated substances added",
+      msg: full + " has widened the scope. " + n + " more chemicals just entered the landscape — most of them hazardous.",
+    });
+  }
 }
-function showPowerupModal(){
-  const def = puModalQueue.shift();
-  if (!def) return;
-  state = "powerup";
-  mouse.down = false;
-  canvas.style.cursor = "default";
-  $("pu-panel").style.setProperty("--pu-c", def.color);
-  $("pu-icon").src = ICONS[def.id].src;
-  $("pu-name").textContent = def.name;
-  $("pu-effect").textContent = def.short;
-  $("pu-msg").textContent = def.msg;
-  showScreen("screen-powerup");
-  setTimeout(() => $("btn-pu-continue").focus({ preventScroll: true }), 40);
+
+/* ───────────── compliance-document submission mini game ───────────────── */
+/* The player must drag every compliance document into the agency folder.
+   They cannot move or shoot meanwhile — but the hazards keep coming.       */
+const DOC_LABELS   = ["SDS", "REACH Dossier", "CLP Notification", "PFAS Report", "SVHC Notice", "TSCA Form", "Exposure Scenario", "Test Summary"];
+const DECOY_LABELS = ["Lunch Menu", "Cat Memes", "Holiday Pics", "Fantasy League"];
+
+function scheduleMini(){
+  if (G.miniCount === 0){
+    showModal({
+      emoji: "📁", color: C.gold,
+      kicker: "Submission deadline",
+      title: "File your compliance documents!",
+      effect: "Drag every document into the folder — fast",
+      msg: "The regulator wants your paperwork now. Drag each compliance document into the ECHA / EPA folder. You can't move or shoot until it's all filed, and the hazards keep coming — so be quick. Submit in time and a batch of chemicals is reclassified harmless. From now on this happens without warning.",
+    }, startMini);
+  } else startMini();
+}
+function startMini(){
+  const agency = Math.random() < 0.5 ? "ECHA" : "EPA";
+  const need = Math.min(6, 3 + G.miniCount);
+  const decoys = G.miniCount === 0 ? 0 : (G.miniCount >= 3 ? 2 : 1);
+  const labels = shuffle(DOC_LABELS.slice()), dl = shuffle(DECOY_LABELS.slice());
+  const items = [];
+  for (let i=0; i<need; i++)   items.push({ label: labels[i % labels.length], decoy:false });
+  for (let i=0; i<decoys; i++) items.push({ label: dl[i % dl.length], decoy:true });
+  shuffle(items);
+  // lay documents out on shelves across the lower part of the screen
+  // (two rows in portrait / desktop, a single row on a phone held landscape)
+  const count = items.length, rows = miniLandscape() ? 1 : 2, cols = Math.ceil(count/rows);
+  items.forEach((d, i) => {
+    const col = i % cols, row = Math.floor(i / cols);
+    const fx = cols === 1 ? 0.5 : 0.16 + col * (0.68 / (cols - 1));
+    const fy = (rows === 1 ? 0.74 : (row === 0 ? 0.55 : 0.79)) + rnd(-0.015, 0.015);
+    d.fx = d.hx = fx + rnd(-0.02, 0.02); d.fy = d.hy = fy;
+    d.rot = rnd(-0.14, 0.14); d.filed = false; d.bounceT = 0;
+  });
+  G.mini = { agency, docs: items, need, filed: 0, t: CONFIG.MINI_TIME_LIMIT, limit: CONFIG.MINI_TIME_LIMIT,
+             drag: null, done: false, doneT: 0, result: null, msg: "", flash: "", flashT: 0 };
+  clearSticks(); mouse.down = false;
+  Sfx.alarm();
+}
+function docSize(){ const w = clamp(Math.min(W, H) * 0.17, 56, 84); return { w, h: w*1.22 }; }
+function docRect(d){ const s = docSize(); return { x: d.fx*W - s.w/2, y: d.fy*H - s.h/2, w: s.w, h: s.h }; }
+const miniLandscape = () => W > H * 1.3;
+function miniHeaderY(){ return SMALL ? (miniLandscape() ? 46 : 112) : 96; }   // baseline of the title
+function folderRect(){
+  const w = clamp(Math.min(W, H) * 0.3, 96, 140), h = w*0.72;
+  return { x: W/2 - w/2, y: miniHeaderY() + 70, w, h };
+}
+
+function miniPointerDown(id, x, y){
+  const m = G.mini;
+  if (m.done || m.drag) return;
+  for (let i = m.docs.length-1; i >= 0; i--){
+    const d = m.docs[i];
+    if (d.filed) continue;
+    if (hitRect(docRect(d), x, y, 6)){
+      m.drag = { id, d, dx: d.fx*W - x, dy: d.fy*H - y };
+      m.docs.splice(i, 1); m.docs.push(d);       // bring to front
+      Sfx.ui();
+      return;
+    }
+  }
+}
+function miniPointerMove(id, x, y){
+  const m = G.mini;
+  if (!m.drag || m.drag.id !== id) return false;
+  m.drag.d.fx = clamp((x + m.drag.dx) / W, 0.04, 0.96);
+  m.drag.d.fy = clamp((y + m.drag.dy) / H, 0.04, 0.96);
+  return true;
+}
+function miniPointerUp(id){
+  const m = G.mini;
+  if (!m.drag || m.drag.id !== id) return;
+  const d = m.drag.d; m.drag = null;
+  if (m.done) return;
+  const f = folderRect();
+  if (hitRect(f, d.fx*W, d.fy*H, 14)){
+    if (d.decoy){
+      G.score = Math.max(0, G.score - 50);
+      d.fx = d.hx; d.fy = d.hy; d.bounceT = 0.5;
+      m.flash = "THAT'S NOT COMPLIANCE PAPERWORK!  −50"; m.flashT = 1.5;
+      shake(0.3, 6); Sfx.hurt();
+    } else {
+      d.filed = true; m.filed++;
+      Sfx.file();
+      if (m.filed >= m.need) finishMini(true);
+    }
+  }
+}
+function finishMini(success){
+  const m = G.mini, p = G.player;
+  m.done = true; m.doneT = 1.8; m.result = success; m.drag = null;
+  G.miniCount++;
+  if (success){
+    const hz = hazardsByDistance();
+    const n = Math.min(hz.length, Math.max(4, Math.ceil(hz.length * 0.45)));
+    hz.slice(0, n).forEach(makeHarmless);
+    G.score += 150;
+    p.iframes = Math.max(p.iframes, 1.5);
+    m.msg = "DOSSIER SUBMITTED!  +150  ·  " + n + " chemicals reclassified harmless";
+    Sfx.win();
+  } else {
+    const n = 5 + Math.floor(G.wave/2);
+    for (let i=0; i<n; i++) spawnEnemy("red");
+    m.msg = "DEADLINE MISSED  ·  " + n + " enforcement actions incoming";
+    shake(0.5, 10); Sfx.over();
+  }
+}
+
+/* ─────────────────────── pop-up modal (pauses play) ───────────────────── */
+function showModal(opts, onContinue){
+  modalQueue.push({ opts, onContinue: onContinue || null });
+  if (state === "playing") nextModal();
+}
+function nextModal(){
+  const m = modalQueue.shift();
+  if (!m) return;
+  const o = m.opts;
+  state = "modal"; modalCb = m.onContinue;
+  mouse.down = false; clearSticks();
+  updateCursor();
+  $("modal-panel").style.setProperty("--pu-c", o.color || C.gold);
+  const img = $("modal-icon"), emo = $("modal-emoji");
+  if (o.icon){ img.src = ICONS[o.icon].src; img.classList.remove("hidden"); emo.classList.add("hidden"); }
+  else { img.classList.add("hidden"); emo.textContent = o.emoji || "⚡"; emo.classList.remove("hidden"); }
+  $("modal-kicker").textContent = o.kicker || "";
+  $("modal-title").textContent = o.title || "";
+  $("modal-effect").textContent = o.effect || "";
+  $("modal-msg").textContent = o.msg || "";
+  showScreen("screen-modal");
+  setTimeout(() => $("btn-modal-continue").focus({ preventScroll: true }), 40);
 }
 function continueFromModal(){
-  if (state !== "powerup") return;
-  if (puModalQueue.length){ showPowerupModal(); return; }
+  if (state !== "modal") return;
+  const cb = modalCb; modalCb = null;
+  if (cb) cb();
+  if (modalQueue.length){ nextModal(); return; }
   state = "playing";
-  canvas.style.cursor = "none";
   hideAllScreens();
+  updateCursor();
 }
 
 /* Circle-vs-wall de-penetration: eject an enemy out of any wall tile its body
@@ -1052,8 +1456,6 @@ function continueFromModal(){
    nothing — however it got shoved — can stay embedded in a wall. */
 function depenetrateEnemy(world, e){
   const r = e.colR, T = TILE, tiles = world.tiles;
-  // iterate: pushing out of one wall tile can push into an adjacent one
-  // (corners, 1-tile corridors, dense pile-ups), so resolve a few times
   for (let pass=0; pass<4; pass++){
     let hit = false;
     const minTX = Math.max(0, Math.floor((e.x - r)/T));
@@ -1101,29 +1503,57 @@ function gameUpdate(dt){
   const p = G.player, world = G.world;
   G.elapsed += dt;
   G.score += dt * CONFIG.SCORE_PER_SEC;
+  tickEffects(dt);
+  const god = p.fx.god > 0;
+  const rateMul = p.fx.firerate > 0 ? 0.5 : 1;
+  const dmgMul  = p.fx.damage   > 0 ? 2   : 1;
+  const mini = G.mini;
+
+  // mini game clock (the player is busy filing — no moving, no shooting)
+  if (mini){
+    if (!mini.done){ mini.t -= dt; if (mini.t <= 0) finishMini(false); }
+    else { mini.doneT -= dt; if (mini.doneT <= 0) G.mini = null; }
+    if (mini.flashT > 0) mini.flashT -= dt;
+    for (const d of mini.docs) if (d.bounceT > 0) d.bounceT -= dt;
+  }
 
   // movement
-  const [mx, my] = movementAxes();
+  const [mx, my] = mini ? [0,0] : movementAxes();
   p.moving = !!(mx || my);
   if (p.moving) p.animT += dt*9;
   const spd = p.speed * dt * 60;
-  const nx = p.x + mx*spd, ny = p.y + my*spd;
-  if (!circleBlocked(world, nx, p.y, p.r)) p.x = nx;
-  if (!circleBlocked(world, p.x, ny, p.r)) p.y = ny;
+  if (god){   // AI Booster: phase straight through walls (but stay inside the outer boundary)
+    p.x = clamp(p.x + mx*spd, TILE + p.r, world.w - TILE - p.r);
+    p.y = clamp(p.y + my*spd, TILE + p.r, world.h - TILE - p.r);
+  } else {
+    const nx = p.x + mx*spd, ny = p.y + my*spd;
+    if (!circleBlocked(world, nx, p.y, p.r)) p.x = nx;
+    if (!circleBlocked(world, p.x, ny, p.r)) p.y = ny;
+  }
 
-  // aim (mouse in screen space; player is at screen centre)
-  p.aim = Math.atan2(mouse.y - H/2, mouse.x - W/2);
+  // aim: right stick (touch) or mouse; fire while the stick is held / button down
+  let firing = false;
+  if (sticks.aim){
+    const [ax, ay] = stickVec(sticks.aim);
+    if (ax || ay) p.aim = Math.atan2(ay, ax);
+    firing = true;
+  } else if (mouse.active){
+    p.aim = Math.atan2(mouse.y - H/2, mouse.x - W/2);
+    firing = mouse.down;
+  }
+  if (mini) firing = false;
   if (p.iframes > 0) p.iframes -= dt;
 
-  // shooting — hold left click
+  // shooting
   p.shootCd -= dt;
-  if (mouse.down && p.shootCd <= 0){
-    p.shootCd = p.baseRate * p.rateMul;
+  if (firing && p.shootCd <= 0){
+    p.shootCd = p.baseRate * rateMul;
+    G.shots++;
     const a = p.aim + rnd(-0.02, 0.02);
     G.bullets.push({
       x: p.x + Math.cos(a)*20, y: p.y + Math.sin(a)*20,
       vx: Math.cos(a)*9.4, vy: Math.sin(a)*9.4,
-      dmg: p.baseDmg * p.dmgMul, r: 5, life: 1.5, col: C.blueLight,
+      dmg: p.baseDmg * dmgMul, r: 5, life: 1.5, col: C.blueLight,
     });
     Sfx.shoot();
     for (let i=0;i<2;i++) G.parts.push({ x:p.x+Math.cos(a)*24, y:p.y+Math.sin(a)*24,
@@ -1131,20 +1561,29 @@ function gameUpdate(dt){
       life:0.12, maxLife:0.12, col:"#ffe9a8", size:2.4 });
   }
 
-  // buddies
+  // buddies (Knowledge Hub) — only ever shoot at genuine hazards
   for (const b of p.buddies){
     b.angle += dt*1.6;
     b.cd -= dt;
     if (b.cd <= 0 && G.enemies.length){
-      b.cd = b.rate;
+      b.cd = 0.45 * rateMul;
       const bx = p.x + Math.cos(b.angle)*54, by = p.y + Math.sin(b.angle)*54;
       let best = null, bd = Infinity;
-      for (const e of G.enemies){ const d = dist2(e.x,e.y,bx,by); if (d < bd){ bd = d; best = e; } }
+      for (const e of G.enemies){ if (!e.hazard) continue; const d = dist2(e.x,e.y,bx,by); if (d < bd){ bd = d; best = e; } }
       if (best && bd < 700*700){
         const d = Math.sqrt(bd) || 1;
         G.bullets.push({ x:bx, y:by, vx:(best.x-bx)/d*7.5, vy:(best.y-by)/d*7.5,
-                         dmg:b.dmg, r:4, life:1.4, col:C.sky });
+                         dmg:16 * dmgMul, r:4, life:1.4, col:C.cyan });
       }
+    }
+  }
+
+  // Connect aura: anything hazardous that comes close gets talked down
+  if (p.fx.cleanse > 0){
+    p.cleanseCd -= dt;
+    if (p.cleanseCd <= 0){
+      const near = hazardsByDistance(110);
+      if (near.length){ makeHarmless(near[0]); Sfx.cleanse(); p.cleanseCd = 0.45; }
     }
   }
 
@@ -1164,14 +1603,14 @@ function gameUpdate(dt){
 
   // enemies
   const INF = 0xffff, tw = world.tw, th = world.th;
+  const speedMul = mini ? 0.7 : 1;
   for (const e of G.enemies){
     e.pulse += dt*3;
+    if (e.life !== Infinity){ e.life -= dt; if (e.life <= 0){ e.dead = true; burst(e.x, e.y, KIND.green.color, 5); continue; } }
     const dx = p.x - e.x, dy = p.y - e.y;
     const d = Math.hypot(dx, dy) || 1;
     let vx = dx/d, vy = dy/d;
     // steer along the flow field toward the lowest-distance neighbouring tile.
-    // works even when the centre tile reads INF (e.g. momentarily wall-adjacent),
-    // so an enemy always heads back toward open floor rather than into the wall.
     const etx = clamp(Math.floor(e.x/TILE), 0, tw-1);
     const ety = clamp(Math.floor(e.y/TILE), 0, th-1);
     const ei = ety*tw + etx;
@@ -1190,7 +1629,7 @@ function gameUpdate(dt){
     if (e.wanderT > 0){ vx = e.wx; vy = e.wy; e.wanderT -= dt; }
 
     // radius-aware sliding movement, then hard de-penetration
-    const step = e.speed * dt * 60, er = e.colR;
+    const step = e.speed * speedMul * dt * 60, er = e.colR;
     let moved = false;
     const nx = e.x + vx*step;
     if (!circleBlocked(world, nx, e.y, er)){ e.x = nx; moved = true; }
@@ -1202,14 +1641,12 @@ function gameUpdate(dt){
     }
     depenetrateEnemy(world, e);
 
-    // touch damage
+    // touch: only hazards hurt; harmless chemicals are walked straight through
+    if (!e.hazard) continue;
     const rr2 = (e.size + p.r) * (e.size + p.r);
-    if (dist2(e.x, e.y, p.x, p.y) < rr2 && p.iframes <= 0){
-      if (p.shield > 0){
-        p.shield--; p.iframes = 0.45; Sfx.shield();
-        burst(p.x, p.y, C.teal, 10);
-        addFloat(p.x, p.y - 24, "SHIELDED!", C.teal);
-      } else {
+    if (dist2(e.x, e.y, p.x, p.y) < rr2){
+      if (god){ killEnemy(e); addFloat(p.x, p.y - 26, "PROCESSED", PU_BY_ID.ai.color); continue; }
+      if (p.iframes <= 0){
         p.hp -= e.dmg; p.iframes = 0.8;
         shake(0.35, 8); Sfx.hurt();
         burst(p.x, p.y, C.red, 12);
@@ -1221,8 +1658,10 @@ function gameUpdate(dt){
   const es = G.enemies;
   for (let i=0; i<es.length; i++){
     const a = es[i];
+    if (a.dead) continue;
     for (let j=i+1; j<es.length; j++){
       const b = es[j];
+      if (b.dead) continue;
       const min = (a.colR + b.colR) * 0.95;
       const d2v = dist2(a.x,a.y,b.x,b.y);
       if (d2v < min*min && d2v > 0.01){
@@ -1233,17 +1672,17 @@ function gameUpdate(dt){
     }
   }
   // final pass: eject anyone separation may have shoved into a wall
-  for (const e of es) depenetrateEnemy(world, e);
+  for (const e of es) if (!e.dead) depenetrateEnemy(world, e);
 
-  // bullet ↔ enemy
+  // bullet ↔ enemy (shots pass straight through harmless chemicals)
   for (const b of G.bullets){
     if (b.dead) continue;
     for (const e of G.enemies){
-      if (e.hp <= 0) continue;
+      if (e.hp <= 0 || e.dead || !e.hazard) continue;
       const rad = e.size + b.r;
       if (dist2(b.x, b.y, e.x, e.y) < rad*rad){
         e.hp -= b.dmg;
-        burst(e.x, e.y, e.type.color, 4);
+        burst(e.x, e.y, KIND[visibleKind(e)].color, 4);
         Sfx.hit();
         if (e.hp <= 0) killEnemy(e);
         b.dead = true;
@@ -1277,9 +1716,8 @@ function gameUpdate(dt){
     G.trickleT -= dt;
     if (G.trickleT <= 0){
       G.trickleT = Math.max(1.4, 3.2 - G.wave*0.12);
-      const pool = ENEMY_TYPES.filter(t => t.minWave <= G.wave);
       const n = 1 + Math.floor(G.wave/4);
-      for (let i=0;i<n;i++) spawnEnemy(pool);
+      for (let i=0;i<n;i++) spawnEnemy();
     }
   }
   // power-ups: frequent drops, two at a time from wave 4
@@ -1290,6 +1728,20 @@ function gameUpdate(dt){
     if (G.wave >= 4) spawnPickup();
   }
   if (G.waveBannerT > 0) G.waveBannerT -= dt;
+
+  // scheduled events — never while filing documents or while a pop-up is queued
+  if (!G.mini && state === "playing" && !modalQueue.length){
+    G.miniT -= dt; G.regT -= dt;
+    if (G.miniT <= 0){
+      G.miniT = rnd(CONFIG.MINI_EVERY[0], CONFIG.MINI_EVERY[1]);
+      G.regT = Math.max(G.regT, 12);           // keep the two events apart
+      scheduleMini();
+    } else if (G.regT <= 0){
+      G.regT = rnd(CONFIG.REG_EVERY[0], CONFIG.REG_EVERY[1]);
+      G.miniT = Math.max(G.miniT, 12);
+      fireRegulation();
+    }
+  }
 }
 
 function burst(x, y, col, n){
@@ -1308,8 +1760,9 @@ function makeAttract(){
   const drones = [];
   for (let i=0;i<22;i++){
     const s = freeSpot(world, 20);
-    const type = ENEMY_TYPES[Math.floor(Math.random()*ENEMY_TYPES.length)];
-    drones.push({ x:s.x, y:s.y, type, size:rnd(11,18), pulse:rnd(0,7),
+    const kind = pick(KIND_IDS);
+    drones.push({ x:s.x, y:s.y, kind, hazard: KIND[kind].hazard !== false, glyph: pick(GLYPH_IDS),
+                  size:rnd(12,18), pulse:rnd(0,7), life: Infinity,
                   tx:s.x, ty:s.y, speed:rnd(0.5,1.1), hp:1, maxHp:1 });
   }
   const c0 = freeSpot(world, 30);
@@ -1340,16 +1793,20 @@ function attractUpdate(dt){
 }
 
 /* ─────────────────────────── drawing: world ───────────────────────────── */
+/* World drawing happens under a ctx.scale(ZOOM) transform, so the visible
+   area is W/ZOOM × H/ZOOM world units; HUD and touch controls are drawn
+   afterwards in plain screen space. */
 function drawWorld(world, camX, camY, dim){
-  ctx.fillStyle = C.bg; ctx.fillRect(0,0,W,H);
-  const ox = Math.round(W/2 - camX), oy = Math.round(H/2 - camY);
+  const VW = W/ZOOM, VH = H/ZOOM;
+  ctx.fillStyle = C.bg; ctx.fillRect(0,0,VW,VH);
+  const ox = Math.round(VW/2 - camX), oy = Math.round(VH/2 - camY);
   ctx.drawImage(world.mapCanvas, ox, oy);
-  if (dim){ ctx.fillStyle = "rgba(7,16,27,0.55)"; ctx.fillRect(0,0,W,H); }
+  if (dim){ ctx.fillStyle = "rgba(7,16,27,0.55)"; ctx.fillRect(0,0,VW,VH); }
 }
 
 /* ── GHS-style pictogram glyphs, drawn centred at 0,0, scale s.
-   `ink` = dark tint of the enemy's aura colour, `paper` = light tint used for
-   cut-outs (eyes, highlights) so the whole symbol reads in the enemy's hue. ── */
+   `ink` = dark tint of the chemical's colour, `paper` = light tint used for
+   cut-outs (eyes, highlights) so the whole symbol reads in that hue. ── */
 function glyphSkull(g, s, ink, paper){
   g.fillStyle = ink;
   g.beginPath(); g.arc(0, -s*0.16, s*0.34, 0, 7); g.fill();
@@ -1440,18 +1897,32 @@ function glyphHealth(g, s, ink, paper){ // exploding-chest silhouette (health ha
     g.stroke();
   }
 }
+function glyphCheck(g, s, ink){ // harmless: tick mark
+  g.strokeStyle = ink; g.lineWidth = Math.max(2.2, s*0.15); g.lineCap = "round"; g.lineJoin = "round";
+  g.beginPath(); g.moveTo(-s*0.32, 0.02*s); g.lineTo(-s*0.08, s*0.26); g.lineTo(s*0.36, -s*0.26); g.stroke();
+}
+function glyphQuestion(g, s, ink){ // unknown: question mark
+  g.fillStyle = ink;
+  g.font = "800 " + Math.round(s*1.0) + "px 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif";
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillText("?", 0, s*0.04);
+}
 const GLYPHS = { skull:glyphSkull, exclaim:glyphExclaim, corrosion:glyphCorrosion,
                  trefoil:glyphTrefoil, flame:glyphFlame, enviro:glyphEnviro, health:glyphHealth };
 
-/* hazardous chemical enemy: toxic blob + GHS diamond + readable label */
-function drawHazard(e, sx, sy){
-  const col = e.type.color;
+/* a chemical: coloured toxic blob + tinted GHS diamond carrying its status symbol
+   (hazard pictogram / tick / question mark). No text — colour is the signal. */
+function drawChem(e, sx, sy, emit){
+  const kindId = visibleKind(e), col = KIND[kindId].color;
   const r = e.size + Math.sin(e.pulse)*2;
+  const fade = e.life < 1.5 ? clamp(e.life/1.5, 0, 1) : 1;      // dispersing harmless chemical
+  ctx.save();
+  ctx.globalAlpha = fade;
   // glow
-  ctx.globalAlpha = 0.25;
+  ctx.globalAlpha = 0.3 * fade;
   ctx.fillStyle = col;
-  ctx.beginPath(); ctx.arc(sx, sy, r*2.0, 0, 7); ctx.fill();
-  ctx.globalAlpha = 1;
+  ctx.beginPath(); ctx.arc(sx, sy, r*2.1, 0, 7); ctx.fill();
+  ctx.globalAlpha = fade;
   // toxic blob body
   ctx.fillStyle = col;
   ctx.beginPath();
@@ -1463,28 +1934,21 @@ function drawHazard(e, sx, sy){
   }
   ctx.closePath(); ctx.fill();
   // occasional rising toxic bubble
-  if (Math.random() < 0.04)
+  if (emit && Math.random() < 0.04)
     G.parts.push({ x:e.x+rnd(-r,r)*0.6, y:e.y-r*0.4, vx:rnd(-0.2,0.2), vy:rnd(-1.2,-0.5),
                    life:rnd(0.4,0.8), maxLife:0.8, col, size:rnd(1.6,3) });
-  // GHS diamond with pictogram, tinted to the enemy's aura colour so hazards
-  // read clearly apart from the (white-carded) Helix power-ups
-  const fill   = lighten(col, 0.82);   // pale wash of the aura
-  const border = darken(col, 0.28);    // deep aura border
-  const ink    = darken(col, 0.55);    // pictogram in a dark aura tint
-  const paper  = lighten(col, 0.9);    // cut-out highlights
-  const side = r*1.24;                       // half-diagonal ≈ 0.88 side
-  ctx.save();
+  // diamond, tinted in the chemical's own hue
+  const fill = lighten(col, 0.5), border = darken(col, 0.3), ink = darken(col, 0.6), paper = lighten(col, 0.88);
+  const hs = r*1.24*0.72;
   ctx.translate(sx, sy);
   ctx.save();
   ctx.rotate(Math.PI/4);
-  ctx.fillStyle = fill;
-  ctx.strokeStyle = border;
-  ctx.lineWidth = Math.max(2, r*0.16);
-  const hs = side*0.72;
+  ctx.fillStyle = fill; ctx.strokeStyle = border; ctx.lineWidth = Math.max(2, r*0.16);
   ctx.beginPath(); ctx.rect(-hs, -hs, hs*2, hs*2); ctx.fill(); ctx.stroke();
   ctx.restore();
-  const gl = GLYPHS[e.type.glyph] || glyphExclaim;
-  gl(ctx, r*1.05, ink, paper);
+  if (kindId === "red")        (GLYPHS[e.glyph] || glyphExclaim)(ctx, r*1.05, ink, paper);
+  else if (kindId === "green") glyphCheck(ctx, r*1.05, ink);
+  else                         glyphQuestion(ctx, r*1.05, ink);
   ctx.restore();
   // elite ring
   if (e.elite){
@@ -1493,18 +1957,7 @@ function drawHazard(e, sx, sy){
     ctx.beginPath(); ctx.arc(sx, sy, e.size+8, e.pulse*0.7, e.pulse*0.7+7); ctx.stroke();
     ctx.setLineDash([]);
   }
-  // readable label pill
-  ctx.font = "700 11px 'IBM Plex Mono', Consolas, monospace";
-  ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  const label = e.type.label;
-  const lw = ctx.measureText(label).width + 12;
-  const ly = sy + e.size + 12;
-  rr(ctx, sx-lw/2, ly-8, lw, 16, 3);
-  ctx.fillStyle = "rgba(22,22,22,0.88)"; ctx.fill();
-  ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.stroke();
-  ctx.fillStyle = col;
-  ctx.fillText(label, sx, ly+0.5);
-  // hp bar
+  // hp bar (only hazards ever take damage)
   if (e.hp < e.maxHp){
     const bw = e.size*2;
     ctx.fillStyle = "rgba(218,30,40,0.9)";
@@ -1529,7 +1982,7 @@ function drawScientist(sx, sy, aim, opts){
   rr(ctx, -s*0.42, -s*0.3, s*0.84, s*0.62, 4);
   ctx.fillStyle = "#f2f6fa"; ctx.fill();
   ctx.fillStyle = C.blue;
-  ctx.fillRect(-s*0.06, -s*0.3, s*0.12, s*0.62);        // Carbon-blue zip stripe
+  ctx.fillRect(-s*0.06, -s*0.3, s*0.12, s*0.62);        // zip stripe
   // head
   ctx.fillStyle = "#f5c518";
   ctx.beginPath(); ctx.arc(0, -s*0.62, s*0.34, 0, 7); ctx.fill();
@@ -1583,24 +2036,43 @@ function drawPickup(pu, sx, sy){
 }
 
 /* ─────────────────────────── drawing: HUD ─────────────────────────────── */
-function drawHud(){
+function effectTime(pu){
   const p = G.player;
+  switch (pu.effect){
+    case "cleanse":  return p.fx.cleanse;
+    case "buddy":    return p.fx.buddy;
+    case "firerate": return p.fx.firerate;
+    case "damage":   return p.fx.damage;
+    case "heal":     return p.hp > p.maxHp ? p.fx.overheal : 0;
+    case "god":      return p.fx.god;
+  }
+  return 0;
+}
+function drawHud(){
+  const p = G.player, small = SMALL;
   ctx.save();
   ctx.textBaseline = "alphabetic";
 
   // ── compliance meter (top-left)
-  const mw = Math.min(280, W*0.34), mh = 20, mxx = 18, myy = 34;
-  ctx.font = "700 11px 'IBM Plex Mono', Consolas, monospace";
+  const mw = Math.min(280, W*0.34), mh = small ? 16 : 20, mxx = 18, myy = 34;
+  ctx.font = "700 " + (small ? 10 : 11) + "px 'IBM Plex Mono', Consolas, monospace";
   ctx.textAlign = "left";
   ctx.fillStyle = C.text2;
   ctx.fillText("COMPLIANCE METER", mxx, myy - 8);
   rr(ctx, mxx, myy, mw, mh, 4);
   ctx.fillStyle = "rgba(22,22,22,0.85)"; ctx.fill();
   const ratio = clamp(p.hp / p.maxHp, 0, 1);
+  const over = p.hp > p.maxHp;
   const mcol = ratio > 0.5 ? C.green : ratio > 0.25 ? C.yellow : C.red;
   if (ratio > 0){
     rr(ctx, mxx+2, myy+2, (mw-4)*ratio, mh-4, 3);
     ctx.fillStyle = mcol; ctx.fill();
+  }
+  if (over){   // overheal: golden glow around a full bar
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.6 + 0.4*Math.sin(performance.now()/160);
+    rr(ctx, mxx-2, myy-2, mw+4, mh+4, 6); ctx.stroke();
+    ctx.globalAlpha = 1;
   }
   // low-compliance flash
   if (ratio <= 0.25 && Math.sin(performance.now()/120) > 0){
@@ -1609,88 +2081,130 @@ function drawHud(){
   }
   ctx.strokeStyle = "rgba(198,198,198,0.5)"; ctx.lineWidth = 1;
   rr(ctx, mxx, myy, mw, mh, 4); ctx.stroke();
-  ctx.fillStyle = C.text;
-  ctx.font = "800 12px 'IBM Plex Mono', Consolas, monospace";
-  ctx.fillText(Math.ceil(ratio*100) + "%", mxx + mw + 8, myy + 15);
-  // shield pips
-  if (p.shield > 0){
-    for (let i=0;i<p.shield;i++){
-      ctx.fillStyle = C.teal;
-      ctx.beginPath(); ctx.arc(mxx + 8 + i*16, myy + mh + 12, 5, 0, 7); ctx.fill();
-    }
-    ctx.fillStyle = C.text2; ctx.font = "700 10px 'IBM Plex Mono', Consolas, monospace";
-    ctx.fillText("SHIELD", mxx + 8 + p.shield*16 + 4, myy + mh + 15);
+  const pct = Math.ceil(p.hp / p.maxHp * 100) + "%";
+  if (small){   // phones: percentage sits inside the bar so it never collides with the score
+    ctx.font = "800 11px 'IBM Plex Mono', Consolas, monospace";
+    ctx.textAlign = "right";
+    ctx.fillStyle = "rgba(0,0,0,0.55)"; ctx.fillText(pct, mxx + mw - 5, myy + mh - 4);
+    ctx.fillStyle = over ? C.gold : C.text; ctx.fillText(pct, mxx + mw - 6, myy + mh - 5);
+    ctx.textAlign = "left";
+  } else {
+    ctx.fillStyle = over ? C.gold : C.text;
+    ctx.font = "800 12px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillText(pct, mxx + mw + 8, myy + mh - 5);
+  }
+  // insight bar (true colours visible)
+  if (G.insightT > 0){
+    const iy = myy + mh + 9, frac = clamp(G.insightT / CONFIG.INSIGHT_DURATION, 0, 1);
+    rr(ctx, mxx, iy, mw, 6, 3); ctx.fillStyle = "rgba(22,22,22,0.85)"; ctx.fill();
+    rr(ctx, mxx, iy, mw*frac, 6, 3); ctx.fillStyle = C.gold; ctx.fill();
+    ctx.fillStyle = C.gold; ctx.font = "700 10px 'IBM Plex Mono', Consolas, monospace";
+    if (small) ctx.fillText("INSIGHT", mxx, iy + 17);
+    else ctx.fillText("INSIGHT", mxx + mw + 8, iy + 6);
   }
 
-  // ── score / wave / time (top-centre)
-  ctx.textAlign = "center";
-  ctx.font = "800 26px 'IBM Plex Mono', Consolas, monospace";
-  ctx.fillStyle = C.orange;
-  ctx.fillText(String(Math.floor(G.score)).padStart(6,"0"), W/2, 34);
-  ctx.font = "700 12px 'IBM Plex Mono', Consolas, monospace";
-  ctx.fillStyle = C.text2;
-  ctx.fillText("WAVE " + G.wave + "   ·   " + fmtTime(G.elapsed) + "   ·   " + G.kills + " NEUTRALISED", W/2, 52);
+  // ── score / wave / time (top-centre) — on a phone in landscape the mini game header takes this spot
+  if (!(G.mini && small && W > H)){
+    ctx.textAlign = "center";
+    ctx.font = "800 " + (small ? 22 : 26) + "px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillStyle = C.orange;
+    ctx.fillText(String(Math.floor(G.score)).padStart(6,"0"), W/2, 34);
+    ctx.font = "700 " + (small ? 11 : 12) + "px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillStyle = C.text2;
+    ctx.fillText(small ? "WAVE " + G.wave + " · " + fmtTime(G.elapsed)
+                       : "WAVE " + G.wave + "   ·   " + fmtTime(G.elapsed) + "   ·   " + G.kills + " NEUTRALISED", W/2, 52);
+  }
 
-  // ── active power-up chips (top-right)
-  let cx_ = W - 18;
+  // ── pause button (top-right)
+  const pb = pauseBtnRect();
+  rr(ctx, pb.x, pb.y, pb.w, pb.h, 6);
+  ctx.fillStyle = "rgba(38,38,38,0.9)"; ctx.fill();
+  ctx.strokeStyle = C.cyan; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = C.text;
+  ctx.fillRect(pb.x + 13, pb.y + 12, 5, 18);
+  ctx.fillRect(pb.x + 24, pb.y + 12, 5, 18);
+
+  // ── active power-up chips with countdown rings
+  const chipY = small ? pb.y + pb.h + 14 : 14;
+  let cx_ = small ? W - 14 : pb.x - 8;
   for (const pu of POWERUPS){
-    const n = G.powerCounts[pu.id];
-    if (!n) continue;
-    const badge = n > 1 ? "×" + n : "";
+    const t = effectTime(pu);
+    if (t <= 0) continue;
     cx_ -= 46;
-    rr(ctx, cx_, 14, 40, 40, 4);
+    rr(ctx, cx_, chipY, 40, 40, 4);
     ctx.fillStyle = "rgba(38,38,38,0.9)"; ctx.fill();
-    ctx.strokeStyle = pu.color; ctx.lineWidth = 1.5;
-    rr(ctx, cx_, 14, 40, 40, 4); ctx.stroke();
     const img = ICONS[pu.id];
     if (img && img.complete && img.naturalWidth){
-      rr(ctx, cx_+3, 17, 34, 34, 3);
+      rr(ctx, cx_+3, chipY+3, 34, 34, 3);
       ctx.fillStyle = "#f4f4f4"; ctx.fill();
-      ctx.drawImage(img, cx_+4, 18, 32, 32);
+      ctx.drawImage(img, cx_+4, chipY+4, 32, 32);
     }
-    if (badge){
-      const bw2 = ctx.measureText(badge).width;
-      ctx.fillStyle = pu.color;
-      rr(ctx, cx_+40-Math.max(16,bw2+8), 10, Math.max(16,bw2+8), 15, 7); ctx.fill();
-      ctx.fillStyle = "#161616"; ctx.font = "800 10px 'IBM Plex Mono', Consolas, monospace";
-      ctx.textAlign = "center";
-      ctx.fillText(badge, cx_+40-Math.max(16,bw2+8)/2, 21);
-    }
+    const frac = clamp(t / CONFIG.POWERUP_DURATION, 0, 1);
+    ctx.strokeStyle = "rgba(255,255,255,0.18)"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(cx_+20, chipY+20, 23, 0, 7); ctx.stroke();
+    ctx.strokeStyle = pu.color; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.arc(cx_+20, chipY+20, 23, -Math.PI/2, -Math.PI/2 + Math.PI*2*frac); ctx.stroke();
+    ctx.lineCap = "butt";
+    ctx.fillStyle = pu.color; ctx.font = "800 10px 'IBM Plex Mono', Consolas, monospace";
+    ctx.textAlign = "center";
+    ctx.fillText(Math.ceil(t) + "s", cx_+20, chipY+40+12);
   }
 
-  // ── minimap (bottom-right)
-  const mini = G.world.miniCanvas;
-  const miW = mini.width, miH = mini.height;
-  const miX = W - miW - 14, miY = H - miH - 26;
-  ctx.globalAlpha = 0.9;
-  ctx.drawImage(mini, miX, miY);
-  ctx.globalAlpha = 1;
-  ctx.strokeStyle = "rgba(106,181,212,0.45)"; ctx.lineWidth = 1;
-  ctx.strokeRect(miX-1, miY-1, miW+2, miH+2);
-  const sx_ = miX + p.x / G.world.w * miW, sy_ = miY + p.y / G.world.h * miH;
-  ctx.fillStyle = C.orange;
-  ctx.beginPath(); ctx.arc(sx_, sy_, 3, 0, 7); ctx.fill();
-  ctx.fillStyle = C.cyan;
-  for (const pu of G.pickups){
-    ctx.beginPath();
-    ctx.arc(miX + pu.x/G.world.w*miW, miY + pu.y/G.world.h*miH, 2, 0, 7);
-    ctx.fill();
+  // ── minimap (top-right, under the chips; hidden while filing documents)
+  if (!G.mini){
+    const mini = G.world.miniCanvas;
+    const ms = small ? 2/3 : 1;
+    const miW = mini.width*ms, miH = mini.height*ms;
+    const miX = W - miW - 14, miY = chipY + 40 + 22;
+    ctx.globalAlpha = 0.9;
+    ctx.drawImage(mini, miX, miY, miW, miH);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = "rgba(106,181,212,0.45)"; ctx.lineWidth = 1;
+    ctx.strokeRect(miX-1, miY-1, miW+2, miH+2);
+    const sx_ = miX + p.x / G.world.w * miW, sy_ = miY + p.y / G.world.h * miH;
+    ctx.fillStyle = C.orange;
+    ctx.beginPath(); ctx.arc(sx_, sy_, 3, 0, 7); ctx.fill();
+    ctx.fillStyle = C.cyan;
+    for (const pu of G.pickups){
+      ctx.beginPath();
+      ctx.arc(miX + pu.x/G.world.w*miW, miY + pu.y/G.world.h*miH, 2, 0, 7);
+      ctx.fill();
+    }
   }
 
   // ── wave banner
-  if (G.waveBannerT > 0){
-    const a = clamp(G.waveBannerT / 0.4, 0, 1) * clamp((2.2 - G.waveBannerT) / 0.3, 0, 1);
+  if (G.waveBannerT > 0 && !G.mini){
+    const total = G.bannerSub && G.wave === CONFIG.UNKNOWN_FROM_WAVE ? 3.6 : 2.6;
+    const a = clamp(G.waveBannerT / 0.4, 0, 1) * clamp((total - G.waveBannerT) / 0.3, 0, 1);
     ctx.globalAlpha = a;
-    ctx.font = "800 44px 'IBM Plex Mono', Consolas, monospace";
+    ctx.font = "800 " + (small ? 34 : 44) + "px 'IBM Plex Mono', Consolas, monospace";
     ctx.textAlign = "center";
     ctx.fillStyle = C.red;
     ctx.shadowColor = C.red; ctx.shadowBlur = 26;
     ctx.fillText(G.waveBanner, W/2, H*0.3);
     ctx.shadowBlur = 0;
+    if (G.bannerSub){
+      ctx.font = "700 " + (small ? 11 : 13) + "px 'IBM Plex Mono', Consolas, monospace";
+      ctx.fillStyle = C.text;
+      for (const [i, line] of wrapText(G.bannerSub, W - 40).entries()) ctx.fillText(line, W/2, H*0.3 + 26 + i*17);
+    }
     ctx.globalAlpha = 1;
   }
 
   ctx.restore();
+}
+
+/* break text into lines that fit maxW with the current ctx.font */
+function wrapText(text, maxW){
+  const words = String(text).split(" "), lines = [];
+  let cur = "";
+  for (const w of words){
+    const test = cur ? cur + " " + w : w;
+    if (ctx.measureText(test).width > maxW && cur){ lines.push(cur); cur = w; }
+    else cur = test;
+  }
+  if (cur) lines.push(cur);
+  return lines;
 }
 
 function drawCrosshair(){
@@ -1708,29 +2222,70 @@ function drawCrosshair(){
   ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 7); ctx.fill();
 }
 
+/* virtual twin sticks (touch) */
+function drawSticks(){
+  if (G.mini) return;
+  for (const k in sticks){
+    const s = sticks[k];
+    if (!s) continue;
+    const [vx, vy] = stickVec(s);
+    const col = k === "aim" ? C.gold : C.blueLight;
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(s.ox, s.oy, STICK_R, 0, 7); ctx.fill();
+    ctx.globalAlpha = 0.45;
+    ctx.strokeStyle = col; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(s.ox, s.oy, STICK_R, 0, 7); ctx.stroke();
+    ctx.globalAlpha = 0.6;
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(s.ox + vx*STICK_R, s.oy + vy*STICK_R, 24, 0, 7); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+  // first-seconds hints on touch devices
+  if (IS_TOUCH && G.elapsed < 10){
+    const a = clamp((10 - G.elapsed) / 2, 0, 1) * 0.45;
+    ctx.globalAlpha = a;
+    ctx.setLineDash([6, 8]);
+    ctx.lineWidth = 2;
+    ctx.font = "700 11px 'IBM Plex Mono', Consolas, monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    const hy = H - 120;
+    if (!sticks.move){
+      ctx.strokeStyle = C.blueLight; ctx.fillStyle = C.blueLight;
+      ctx.beginPath(); ctx.arc(W*0.25, hy, STICK_R, 0, 7); ctx.stroke();
+      ctx.fillText("MOVE", W*0.25, hy);
+    }
+    if (!sticks.aim){
+      ctx.strokeStyle = C.gold; ctx.fillStyle = C.gold;
+      ctx.beginPath(); ctx.arc(W*0.75, hy, STICK_R, 0, 7); ctx.stroke();
+      ctx.fillText("AIM · FIRE", W*0.75, hy);
+    }
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  }
+}
+
 /* subtle floating chevron that orbits the player and points at the nearest
    power-up; brighter when the pickup is off-screen, faint when it's in view */
 function drawPickupCompass(){
   const p = G.player;
-  if (!G.pickups.length) return;
+  if (!G.pickups.length || G.mini) return;
   let best = null, bd = Infinity;
   for (const pu of G.pickups){ const d = dist2(pu.x, pu.y, p.x, p.y); if (d < bd){ bd = d; best = pu; } }
   if (!best) return;
   const def = PU_BY_ID[best.id];
   const ang = Math.atan2(best.y - p.y, best.x - p.x);
-  const scrX = best.x - p.x + W/2, scrY = best.y - p.y + H/2;
+  const scrX = (best.x - p.x)*ZOOM + W/2, scrY = (best.y - p.y)*ZOOM + H/2;
   const onScreen = scrX > 40 && scrX < W-40 && scrY > 70 && scrY < H-40;
   const t = performance.now()/1000;
   const radius = 76 + Math.sin(t*3)*3;
   const cx = W/2 + Math.cos(ang)*radius, cy = H/2 + Math.sin(ang)*radius;
   ctx.save();
   ctx.globalAlpha = onScreen ? 0.26 : 0.72;
-  // little trailing dot
   ctx.fillStyle = def.color;
   ctx.beginPath();
   ctx.arc(W/2 + Math.cos(ang)*(radius-13), H/2 + Math.sin(ang)*(radius-13), 2.2, 0, 7);
   ctx.fill();
-  // chevron pointing outward toward the pickup
   ctx.translate(cx, cy);
   ctx.rotate(ang);
   ctx.beginPath();
@@ -1738,6 +2293,100 @@ function drawPickupCompass(){
   ctx.closePath(); ctx.fill();
   ctx.restore();
   ctx.globalAlpha = 1;
+}
+
+/* ─────────────── drawing: document-filing mini game overlay ───────────── */
+function drawFolder(f, agency, hot){
+  ctx.save();
+  if (hot){ ctx.shadowColor = C.gold; ctx.shadowBlur = 28; }
+  rr(ctx, f.x, f.y, f.w*0.44, f.h*0.3, 6); ctx.fillStyle = "#c9931f"; ctx.fill();          // tab
+  rr(ctx, f.x, f.y + f.h*0.12, f.w, f.h*0.88, 8); ctx.fillStyle = "#dca62a"; ctx.fill();   // back
+  ctx.shadowBlur = 0;
+  rr(ctx, f.x, f.y + f.h*0.32, f.w, f.h*0.68, 8); ctx.fillStyle = "#f2c14e"; ctx.fill();   // front flap
+  ctx.strokeStyle = hot ? C.gold : "rgba(0,0,0,0.25)"; ctx.lineWidth = hot ? 3 : 1.5;
+  rr(ctx, f.x, f.y + f.h*0.32, f.w, f.h*0.68, 8); ctx.stroke();
+  ctx.fillStyle = "#1c2f4a";
+  ctx.font = "800 " + Math.round(f.w*0.22) + "px 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(agency, f.x + f.w/2, f.y + f.h*0.66);
+  ctx.restore();
+}
+function drawDoc(d, r, dragging){
+  ctx.save();
+  ctx.translate(r.x + r.w/2, r.y + r.h/2);
+  ctx.rotate(dragging ? 0 : d.rot);
+  const sc = dragging ? 1.1 : (d.bounceT > 0 ? 1 + Math.sin(d.bounceT*20)*0.06 : 1);
+  ctx.scale(sc, sc);
+  if (dragging){ ctx.shadowColor = "rgba(0,0,0,0.6)"; ctx.shadowBlur = 18; ctx.shadowOffsetY = 8; }
+  rr(ctx, -r.w/2, -r.h/2, r.w, r.h, 4);
+  ctx.fillStyle = "#f7f4ea"; ctx.fill();
+  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  ctx.strokeStyle = "#b9b2a0"; ctx.lineWidth = 1.2; ctx.stroke();
+  // folded corner
+  ctx.fillStyle = "#e2dccb";
+  ctx.beginPath(); ctx.moveTo(r.w/2 - 12, -r.h/2); ctx.lineTo(r.w/2, -r.h/2 + 12); ctx.lineTo(r.w/2 - 12, -r.h/2 + 12); ctx.closePath(); ctx.fill();
+  // text lines
+  ctx.fillStyle = "#c8c2b2";
+  for (let i=0;i<4;i++) ctx.fillRect(-r.w/2 + 9, r.h*0.08 + i*7, r.w - 18 - (i===3 ? r.w*0.3 : 0), 2.5);
+  // title
+  ctx.fillStyle = "#1c2f4a";
+  ctx.font = "700 " + Math.round(clamp(r.w*0.15, 10, 13)) + "px 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  const lines = wrapText(d.label, r.w - 12);
+  lines.forEach((l, i) => ctx.fillText(l, 0, -r.h/2 + 16 + i*14));
+  ctx.restore();
+}
+function drawMiniGame(){
+  const m = G.mini, small = SMALL;
+  ctx.save();
+  ctx.fillStyle = "rgba(5,12,22,0.55)"; ctx.fillRect(0,0,W,H);
+  // header + countdown
+  const hy = miniHeaderY();
+  ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = C.gold;
+  ctx.font = "800 " + (small ? 17 : 22) + "px 'IBM Plex Mono', Consolas, monospace";
+  ctx.shadowColor = C.gold; ctx.shadowBlur = 16;
+  ctx.fillText("SUBMISSION DEADLINE", W/2, hy);
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = C.text;
+  ctx.font = "600 " + (small ? 12 : 13) + "px 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif";
+  ctx.fillText("Drag every compliance document into the " + m.agency + " folder", W/2, hy + 20);
+  const bw = Math.min(320, W*0.7), bx = W/2 - bw/2, by = hy + 30;
+  const frac = clamp(m.t / m.limit, 0, 1);
+  rr(ctx, bx, by, bw, 8, 4); ctx.fillStyle = "rgba(22,22,22,0.85)"; ctx.fill();
+  rr(ctx, bx, by, bw*frac, 8, 4); ctx.fillStyle = frac > 0.5 ? C.green : frac > 0.25 ? C.yellow : C.red; ctx.fill();
+  ctx.fillStyle = C.text2; ctx.font = "700 11px 'IBM Plex Mono', Consolas, monospace";
+  ctx.fillText(Math.ceil(Math.max(0, m.t)) + "s  ·  " + m.filed + " / " + m.need + " filed", W/2, by + 22);
+  // folder (glows when a document hovers over it)
+  const f = folderRect();
+  const hot = !!(m.drag && hitRect(f, m.drag.d.fx*W, m.drag.d.fy*H, 14));
+  drawFolder(f, m.agency, hot);
+  // documents
+  for (const d of m.docs){
+    if (d.filed) continue;
+    drawDoc(d, docRect(d), !!(m.drag && m.drag.d === d));
+  }
+  // penalty flash
+  if (m.flashT > 0){
+    ctx.globalAlpha = clamp(m.flashT / 0.4, 0, 1);
+    ctx.fillStyle = C.red; ctx.textAlign = "center";
+    ctx.font = "800 " + (small ? 13 : 16) + "px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillText(m.flash, W/2, H*0.42);
+    ctx.globalAlpha = 1;
+  }
+  // result
+  if (m.done){
+    const col = m.result ? KIND.green.color : C.red;
+    ctx.font = "800 " + (small ? 15 : 20) + "px 'IBM Plex Mono', Consolas, monospace";
+    const lines = wrapText(m.msg, W - 60);
+    const lh = small ? 22 : 28, boxH = lines.length*lh + 26, boxW = Math.min(W - 24, Math.max(...lines.map(l => ctx.measureText(l).width)) + 40);
+    rr(ctx, W/2 - boxW/2, H*0.42 - boxH/2, boxW, boxH, 8);
+    ctx.fillStyle = "rgba(10,24,38,0.92)"; ctx.fill();
+    ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = col; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    lines.forEach((l, i) => ctx.fillText(l, W/2, H*0.42 - boxH/2 + 13 + lh/2 + i*lh));
+  }
+  ctx.restore();
 }
 
 /* ─────────────────────────── render frame ─────────────────────────────── */
@@ -1748,49 +2397,76 @@ function renderGame(){
     camX += rnd(-shakeMag, shakeMag);
     camY += rnd(-shakeMag, shakeMag);
   }
+  const VW = W/ZOOM, VH = H/ZOOM;
+  ctx.save();
+  ctx.scale(ZOOM, ZOOM);
   drawWorld(G.world, camX, camY, false);
-  const ox = W/2 - camX, oy = H/2 - camY;
+  const ox = VW/2 - camX, oy = VH/2 - camY;
+  const god = p.fx.god > 0;
 
   // aim guide
-  ctx.save();
-  ctx.globalAlpha = 0.15;
-  ctx.strokeStyle = C.blueLight; ctx.lineWidth = 1;
-  ctx.setLineDash([4,10]);
-  ctx.beginPath();
-  ctx.moveTo(p.x+ox + Math.cos(p.aim)*26, p.y+oy + Math.sin(p.aim)*26);
-  ctx.lineTo(p.x+ox + Math.cos(p.aim)*190, p.y+oy + Math.sin(p.aim)*190);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
+  if (!G.mini){
+    ctx.save();
+    ctx.globalAlpha = 0.15;
+    ctx.strokeStyle = C.blueLight; ctx.lineWidth = 1;
+    ctx.setLineDash([4,10]);
+    ctx.beginPath();
+    ctx.moveTo(p.x+ox + Math.cos(p.aim)*26, p.y+oy + Math.sin(p.aim)*26);
+    ctx.lineTo(p.x+ox + Math.cos(p.aim)*190, p.y+oy + Math.sin(p.aim)*190);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
 
   for (const pu of G.pickups) drawPickup(pu, pu.x+ox, pu.y+oy);
 
   for (const e of G.enemies){
     const sx = e.x+ox, sy = e.y+oy;
-    if (sx > -70 && sx < W+70 && sy > -70 && sy < H+70) drawHazard(e, sx, sy);
+    if (sx > -70 && sx < VW+70 && sy > -70 && sy < VH+70) drawChem(e, sx, sy, true);
+  }
+
+  // Connect aura
+  if (p.fx.cleanse > 0){
+    ctx.globalAlpha = 0.18 + 0.08*Math.sin(performance.now()/180);
+    ctx.fillStyle = PU_BY_ID.connect.color;
+    ctx.beginPath(); ctx.arc(p.x+ox, p.y+oy, 110, 0, 7); ctx.fill();
+    ctx.globalAlpha = 0.5;
+    ctx.strokeStyle = PU_BY_ID.connect.color; ctx.lineWidth = 1.5;
+    ctx.setLineDash([6,8]);
+    ctx.beginPath(); ctx.arc(p.x+ox, p.y+oy, 110, performance.now()/900, performance.now()/900 + 7); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
   }
 
   // buddies
   for (const b of p.buddies){
     const bx = p.x + Math.cos(b.angle)*54 + ox, by = p.y + Math.sin(b.angle)*54 + oy;
     ctx.globalAlpha = 0.25;
-    ctx.strokeStyle = "#4589ff";
+    ctx.strokeStyle = PU_BY_ID.knowledge.color;
     ctx.beginPath(); ctx.arc(p.x+ox, p.y+oy, 54, 0, 7); ctx.stroke();
     ctx.globalAlpha = 1;
-    drawScientist(bx, by, Math.atan2(mouse.y-H/2, mouse.x-W/2), { size:14 });
-    ctx.strokeStyle = "#4589ff"; ctx.lineWidth = 2;
+    drawScientist(bx, by, p.aim, { size:14 });
+    ctx.strokeStyle = PU_BY_ID.knowledge.color; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.arc(bx, by, 15, 0, 7); ctx.stroke();
   }
 
-  // player (blink during iframes)
-  const blink = p.iframes > 0 && Math.floor(p.iframes*12)%2 === 0;
-  if (!blink) drawScientist(p.x+ox, p.y+oy, p.aim, { size:22, animT:p.animT, moving:p.moving });
-  if (p.shield > 0){
-    ctx.globalAlpha = 0.5 + 0.2*Math.sin(performance.now()/200);
-    ctx.strokeStyle = C.tealLight; ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.arc(p.x+ox, p.y+oy, p.r+11, 0, 7); ctx.stroke();
+  // god-mode aura
+  if (god){
+    const gc = PU_BY_ID.ai.color;
+    ctx.globalAlpha = 0.28 + 0.1*Math.sin(performance.now()/120);
+    ctx.fillStyle = gc;
+    ctx.beginPath(); ctx.arc(p.x+ox, p.y+oy, p.r + 22, 0, 7); ctx.fill();
+    ctx.globalAlpha = 0.9;
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(p.x+ox, p.y+oy, p.r + 14, performance.now()/300, performance.now()/300 + 4.4); ctx.stroke();
     ctx.globalAlpha = 1;
+    if (Math.random() < 0.5) G.parts.push({ x:p.x+rnd(-14,14), y:p.y+rnd(-14,14), vx:rnd(-.4,.4), vy:rnd(-1.4,-.4),
+                                            life:0.5, maxLife:0.5, col:gc, size:rnd(1.5,3) });
   }
+
+  // player (blink during iframes)
+  const blink = !god && p.iframes > 0 && Math.floor(p.iframes*12)%2 === 0;
+  if (!blink) drawScientist(p.x+ox, p.y+oy, p.aim, { size:22, animT:p.animT, moving:p.moving });
 
   for (const b of G.bullets){
     ctx.fillStyle = b.col;
@@ -1810,17 +2486,29 @@ function renderGame(){
   ctx.globalAlpha = 1;
 
   ctx.font = "800 15px 'IBM Plex Mono', Consolas, monospace";
-  ctx.textAlign = "center";
+  ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
   for (const f of G.floats){
     ctx.globalAlpha = clamp(f.life/0.9, 0, 1);
     ctx.fillStyle = f.col;
     ctx.fillText(f.text, f.x+ox, f.y+oy);
   }
   ctx.globalAlpha = 1;
+  ctx.restore();   // back to screen space
 
+  // insight: soft gold frame while true colours are showing
+  if (G.insightT > 0){
+    const a = clamp(G.insightT / 1.5, 0, 1) * (0.35 + 0.1*Math.sin(performance.now()/200));
+    const grad = ctx.createRadialGradient(W/2, H/2, Math.min(W,H)*0.42, W/2, H/2, Math.max(W,H)*0.72);
+    grad.addColorStop(0, "rgba(232,199,111,0)");
+    grad.addColorStop(1, "rgba(232,199,111," + a.toFixed(3) + ")");
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+  }
+
+  if (G.mini) drawMiniGame();
   drawPickupCompass();
   drawHud();
-  if (state === "playing") drawCrosshair();
+  drawSticks();
+  if (state === "playing" && mouse.active && !G.mini) drawCrosshair();
 
   // red vignette when low
   const ratio = p.hp / p.maxHp;
@@ -1835,42 +2523,15 @@ function renderGame(){
 
 function renderAttract(){
   const a = attract;
+  const VW = W/ZOOM, VH = H/ZOOM;
+  ctx.save();
+  ctx.scale(ZOOM, ZOOM);
   drawWorld(a.world, a.camX, a.camY, true);
-  const ox = W/2 - a.camX, oy = H/2 - a.camY;
+  const ox = VW/2 - a.camX, oy = VH/2 - a.camY;
   for (const e of a.drones){
     const sx = e.x+ox, sy = e.y+oy;
-    if (sx > -70 && sx < W+70 && sy > -70 && sy < H+70) drawAttractHazard(e, sx, sy);
+    if (sx > -70 && sx < VW+70 && sy > -70 && sy < VH+70) drawChem(e, sx, sy, false);
   }
-}
-/* attract-mode hazards can't push to G.parts (no game running) */
-function drawAttractHazard(e, sx, sy){
-  const col = e.type.color;
-  const r = e.size + Math.sin(e.pulse)*2;
-  ctx.globalAlpha = 0.25;
-  ctx.fillStyle = col;
-  ctx.beginPath(); ctx.arc(sx, sy, r*2.0, 0, 7); ctx.fill();
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = col;
-  ctx.beginPath();
-  for (let i=0;i<=12;i++){
-    const a = i/12*Math.PI*2;
-    const rad = r * (1.06 + 0.16*Math.sin(a*3 + e.pulse*2));
-    const px_ = sx + Math.cos(a)*rad, py_ = sy + Math.sin(a)*rad;
-    i ? ctx.lineTo(px_,py_) : ctx.moveTo(px_,py_);
-  }
-  ctx.closePath(); ctx.fill();
-  const side = r*1.24;
-  ctx.save();
-  ctx.translate(sx, sy);
-  ctx.save();
-  ctx.rotate(Math.PI/4);
-  ctx.fillStyle = lighten(col, 0.82);
-  ctx.strokeStyle = darken(col, 0.28);
-  ctx.lineWidth = Math.max(2, r*0.16);
-  const hs = side*0.72;
-  ctx.beginPath(); ctx.rect(-hs, -hs, hs*2, hs*2); ctx.fill(); ctx.stroke();
-  ctx.restore();
-  (GLYPHS[e.type.glyph] || glyphExclaim)(ctx, r*1.05, darken(col,0.55), lighten(col,0.9));
   ctx.restore();
 }
 
@@ -1883,8 +2544,8 @@ function frame(t){
 
   if (state === "playing"){
     gameUpdate(dt);
-    if (state === "playing" || state === "over" || state === "powerup") renderGame();
-  } else if (state === "paused" || state === "over" || state === "powerup"){
+    if (G) renderGame();
+  } else if (state === "paused" || state === "over" || state === "modal"){
     if (G) renderGame(); else { attractUpdate(dt); renderAttract(); }
   } else {
     attractUpdate(dt);
@@ -1894,14 +2555,14 @@ function frame(t){
 }
 
 /* ─────────────────────── UI: screens & flow ───────────────────────────── */
-const SCREENS = ["screen-menu","screen-tutorial","screen-board","screen-pause","screen-powerup","screen-over"];
+const SCREENS = ["screen-menu","screen-tutorial","screen-board","screen-pause","screen-modal","screen-over"];
 function hideAllScreens(){ SCREENS.forEach(id => $(id).classList.add("hidden")); }
 function showScreen(id){ hideAllScreens(); $(id).classList.remove("hidden"); }
 
 function goMenu(){
   state = "menu";
   G = null;
-  canvas.style.cursor = "default";
+  updateCursor();
   showScreen("screen-menu");
 }
 function goTutorial(){ state = "tutorial"; showScreen("screen-tutorial"); }
@@ -1910,20 +2571,20 @@ function goBoard(){ state = "board"; renderBoardScreen(); showScreen("screen-boa
 function pauseGame(){
   if (state !== "playing") return;
   state = "paused";
-  mouse.down = false;
-  canvas.style.cursor = "default";
+  mouse.down = false; clearSticks();
+  updateCursor();
   showScreen("screen-pause");
 }
 function resumeGame(){
   if (state !== "paused") return;
   state = "playing";
-  canvas.style.cursor = "none";
   hideAllScreens();
+  updateCursor();
 }
 function handleEscape(){
   if (state === "playing") pauseGame();
   else if (state === "paused") resumeGame();
-  else if (state === "powerup") continueFromModal();
+  else if (state === "modal") continueFromModal();
   else if (state === "tutorial" || state === "board") goMenu();
 }
 
@@ -1940,9 +2601,10 @@ function endRun(outcome){
     savedId: null,
   };
   state = "over";
-  mouse.down = false;
-  puModalQueue = [];
-  canvas.style.cursor = "default";
+  mouse.down = false; clearSticks();
+  modalQueue = []; modalCb = null;
+  G.mini = null;
+  updateCursor();
   if (outcome === "echa"){ shake(0.6, 14); Sfx.over(); }
   else Sfx.win();
 
@@ -1971,7 +2633,7 @@ function endRun(outcome){
   const b = document.createElement("b");
   b.textContent = "#" + rank;
   rl.appendChild(b);
-  rl.appendChild(document.createTextNode(total ? " of " + (total+1) + " hunters on this machine — claim your spot!" : " — first on the board!"));
+  rl.appendChild(document.createTextNode(total ? " of " + (total+1) + " hunters on this device — claim your spot!" : " — first on the board!"));
 
   $("f-name").value = ""; $("f-email").value = ""; $("f-company").value = "";
   $("f-consent").checked = false;
@@ -1981,7 +2643,8 @@ function endRun(outcome){
   showScreen("screen-over");
   const panel = $("screen-over").querySelector(".panel");
   panel.scrollTop = 0;
-  setTimeout(() => { $("f-name").focus({ preventScroll: true }); panel.scrollTop = 0; }, 60);
+  // don't auto-focus on touch devices: it would pop the keyboard over the results
+  if (!IS_TOUCH) setTimeout(() => { $("f-name").focus({ preventScroll: true }); panel.scrollTop = 0; }, 60);
 }
 
 function submitSignup(e){
@@ -2017,6 +2680,7 @@ function showOverBoard(){
   $("ov-phase-form").classList.add("hidden");
   $("ov-phase-board").classList.remove("hidden");
   renderBoardTable($("ov-board-holder"), overInfo.savedId);
+  $("screen-over").querySelector(".panel").scrollTop = 0;
 }
 
 /* leaderboard rendering (usernames + score only) */
@@ -2097,7 +2761,7 @@ function buildTutorial(){
     img.src = ICONS[pu.id].src; img.alt = pu.name;
     const txt = document.createElement("div");
     const nm = document.createElement("div"); nm.className = "pu-name"; nm.textContent = pu.name;
-    const ef = document.createElement("div"); ef.className = "pu-eff"; ef.textContent = pu.short;
+    const ef = document.createElement("div"); ef.className = "pu-eff"; ef.textContent = pu.tut || pu.short;
     txt.append(nm, ef);
     row.append(img, txt);
     holder.appendChild(row);
@@ -2123,11 +2787,20 @@ function boot(){
   $("btn-board-play").addEventListener("click", () => { Sfx.unlock(); Sfx.ui(); newGame(); });
   $("btn-resume").addEventListener("click", () => { Sfx.ui(); resumeGame(); });
   $("btn-endrun").addEventListener("click", () => { Sfx.ui(); endRun("exit"); });
-  $("btn-pu-continue").addEventListener("click", () => { Sfx.ui(); continueFromModal(); });
+  $("btn-modal-continue").addEventListener("click", () => { Sfx.ui(); continueFromModal(); });
   $("signup").addEventListener("submit", submitSignup);
   $("btn-skip").addEventListener("click", () => { Sfx.ui(); skipSignup(); });
   $("btn-again").addEventListener("click", () => { Sfx.ui(); newGame(); });
   $("btn-over-menu").addEventListener("click", () => { Sfx.ui(); goMenu(); });
+
+  // booth admin on phones: tap the menu footer 7 times within a few seconds
+  let taps = 0, tapT = 0;
+  $("menu-footer").addEventListener("click", () => {
+    const now = performance.now();
+    if (now - tapT > 2500) taps = 0;
+    tapT = now; taps++;
+    if (taps >= 7){ taps = 0; adminMenu(); }
+  });
 
   attract = makeAttract();
   goMenu();
@@ -2140,8 +2813,9 @@ window.HH = {
   get state(){ return state; },
   get game(){ return G; },
   newGame, endRun, exportCsv, wipeData, continueFromModal,
+  applyPickup, startMini, fireRegulation, spawnEnemy,
   lbLoad, suLoad,
-  CONFIG, POWERUPS,
+  CONFIG, POWERUPS, KIND,
 };
 </script>
 </body>
